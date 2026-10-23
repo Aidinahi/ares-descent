@@ -1,0 +1,624 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Ares Descent: a scroll-driven 3D journey to Mars. Split the planet open, land on the surface, and learn about its air, year, landforms and whether people could live there.">
+<meta name="author" content="Aidin Hamzeii">
+<meta name="robots" content="index,follow">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Ares Descent">
+<meta property="og:description" content="Scroll to split Mars open, fall through and land on its surface. Facts, orbits, atmosphere and life on the Red Planet.">
+<meta name="twitter:card" content="summary">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Ares Descent","description":"A scroll-driven 3D journey to Mars.","author":{"@type":"Person","name":"Aidin Hamzeii"}}</script>
+<title>Ares Descent</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;600&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a fixed WebGL stage (planet splits, camera falls through, lands on terrain) with scroll captions, then dark reading panels floating over the terrain. */
+:root{
+  --bg:#0b0908; --panel:rgba(17,12,10,.80); --panel-solid:#140f0d; --fg:#ece3dc; --muted:#a69689;
+  --rust:#d8693b; --dust:#e8a574; --ice:#8db2c6; --line:rgba(236,227,220,.13);
+  --display:'Unbounded','Arial Black',system-ui,sans-serif;
+  --body:'Instrument Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);font:400 1.0625rem/1.65 var(--body);overflow-x:clip;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1100px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+#gl{position:fixed;inset:0;width:100%;height:100%;display:block;z-index:0}
+.no-gl body{background:radial-gradient(120% 90% at 50% 20%,#5a2e1e,#0b0908 70%)}
+.no-gl #gl{display:none}
+a{color:var(--dust)}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--ice);outline-offset:3px}
+
+/* nav */
+.nav{position:fixed;top:0;left:0;right:0;z-index:20;padding-top:env(safe-area-inset-top,0px);background:linear-gradient(to bottom,rgba(11,9,8,.85),rgba(11,9,8,0))}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;height:60px}
+.brand{font:500 .8rem/1 var(--display);letter-spacing:.18em;color:var(--fg);text-decoration:none}
+.nav nav{display:flex;gap:22px}
+.nav nav a{font:400 .72rem/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);text-decoration:none}
+.nav nav a:hover{color:var(--fg)}
+@media(max-width:640px){.nav nav a:not(:last-child){display:none}}
+
+/* scroll scene */
+.scene{position:relative;z-index:1}
+.cap{height:100vh;display:flex;align-items:flex-end;padding-bottom:13vh}
+.cap .wrap{width:100%}
+.cap p{max-width:34rem;margin:14px 0 0;color:#d9cdc4;text-shadow:0 1px 14px rgba(0,0,0,.8)}
+.eyebrow{font:400 .74rem/1.4 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--dust)}
+h1{font:600 clamp(2.8rem,10vw,7.4rem)/.95 var(--display);letter-spacing:.01em;margin:14px 0 0;text-shadow:0 2px 30px rgba(0,0,0,.6)}
+h1 span{display:block;color:var(--rust)}
+h2{font:500 clamp(1.7rem,4.4vw,2.9rem)/1.1 var(--display);margin:0;text-wrap:balance;text-shadow:0 2px 24px rgba(0,0,0,.6)}
+.cue{margin-top:30px;font:400 .72rem/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:12px}
+.cue i{display:block;width:1px;height:34px;background:linear-gradient(var(--dust),transparent)}
+
+/* content */
+.content{position:relative;z-index:2;padding-bottom:max(40px,env(safe-area-inset-bottom,0px))}
+.stack{display:flex;flex-direction:column;gap:clamp(40px,12vh,130px)}
+.sheet{background:var(--panel);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:6px;padding:clamp(20px,4.5vw,48px)}
+.sheet h2{text-shadow:none;margin-bottom:12px}
+.sheet h3{font:500 .78rem/1.3 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--dust);margin:0 0 6px}
+.lead{max-width:40rem;color:#d3c7be;margin:0 0 28px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:clamp(20px,4vw,48px)}
+.cols>*{min-width:0}
+@media(max-width:820px){.cols{grid-template-columns:1fr}}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.note{font:400 .76rem/1.5 var(--mono);color:var(--muted);margin:14px 0 0}
+
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+.stat{background:var(--panel-solid);padding:20px 20px 18px}
+.stat b{display:block;font:500 clamp(1.5rem,3.2vw,2.1rem)/1.1 var(--display);color:var(--fg);font-variant-numeric:tabular-nums}
+.stat b small{font-size:.5em;color:var(--dust);margin-left:.3em;letter-spacing:.04em}
+.stat span{display:block;margin-top:8px;color:var(--muted);font-size:.92rem;line-height:1.45}
+
+/* calculator */
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:480px){.fields{grid-template-columns:1fr}}
+label{display:block;font:400 .72rem/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+input{width:100%;font:500 1.05rem var(--body);color:var(--fg);background:#0e0a09;border:1px solid var(--line);border-radius:4px;padding:12px 14px}
+.out{margin-top:22px;display:grid;gap:14px}
+.out div{border-left:2px solid var(--rust);padding-left:14px}
+.out b{display:block;font:500 clamp(1.5rem,3.4vw,2.2rem)/1.15 var(--display);font-variant-numeric:tabular-nums}
+.out span{color:var(--muted);font-size:.95rem}
+
+/* orbit */
+.orbit{position:relative}
+#orbit{width:100%;aspect-ratio:1.45;display:block;background:radial-gradient(circle at 50% 50%,#1a1210,#0d0a09 70%);border:1px solid var(--line);border-radius:4px}
+.orbit-bar{display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center;justify-content:space-between;margin-top:12px}
+.counter{font:400 .8rem/1.4 var(--mono);color:var(--muted);font-variant-numeric:tabular-nums}
+.counter b{color:var(--fg);font-weight:500}
+button{font:500 .78rem/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--fg);background:transparent;border:1px solid var(--line);border-radius:4px;padding:11px 16px;cursor:pointer}
+button:hover{border-color:var(--dust);color:var(--dust)}
+
+/* composition */
+.comp{display:grid;gap:18px}
+.comp-row .name{display:flex;justify-content:space-between;font:400 .74rem/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.bar{display:flex;height:34px;border-radius:3px;overflow:hidden;gap:2px;background:#0e0a09}
+.bar i{display:block;min-width:2px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:6px;font:400 .76rem/1.3 var(--mono);color:var(--muted)}
+.legend span{display:flex;align-items:center;gap:8px}
+.legend s{display:inline-block;width:10px;height:10px;border-radius:2px}
+.c-co2{background:#d8693b}.c-n2{background:#8db2c6}.c-o2{background:#e8c36f}.c-ar{background:#9a8cb8}.c-ot{background:#6f635b}
+
+/* temp chart */
+.chart{width:100%;height:auto;display:block}
+.chart text{font:400 11px var(--mono);fill:var(--muted);font-variant-numeric:tabular-nums}
+.chart .t-strong{fill:var(--fg)}
+.chart line{stroke:var(--line)}
+
+/* bars */
+.hbars{display:grid;gap:12px}
+.hb{display:grid;grid-template-columns:minmax(96px,150px) 1fr auto;gap:12px;align-items:center;font-size:.95rem}
+.hb .track{height:14px;background:#0e0a09;border-radius:2px;overflow:hidden}
+.hb .track i{display:block;height:100%}
+.hb em{font:400 .8rem var(--mono);font-style:normal;color:var(--muted);font-variant-numeric:tabular-nums}
+@media(max-width:480px){.hb{grid-template-columns:1fr auto}.hb .track{grid-column:1/-1;order:3}}
+
+/* survival list */
+.dl{display:grid;gap:0;border-top:1px solid var(--line)}
+.dl div{display:grid;grid-template-columns:minmax(110px,170px) 1fr;gap:6px 24px;padding:18px 0;border-bottom:1px solid var(--line)}
+.dl dt{font:500 .8rem/1.4 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--dust)}
+.dl dd{margin:0;color:#d9cdc4}
+@media(max-width:560px){.dl div{grid-template-columns:1fr}}
+
+/* timeline */
+.tl{list-style:none;margin:0;padding:0;border-left:1px solid var(--line)}
+.tl li{display:grid;grid-template-columns:78px 1fr;gap:6px 18px;padding:0 0 22px 22px;position:relative}
+.tl li::before{content:"";position:absolute;left:-4px;top:.55em;width:7px;height:7px;border-radius:50%;background:var(--rust)}
+.tl b{font:500 .85rem/1.6 var(--mono);color:var(--dust)}
+.tl span{color:#d9cdc4}
+
+/* creator */
+.maker{display:grid;grid-template-columns:1.2fr 1fr;gap:clamp(20px,4vw,48px);align-items:start}
+.maker>*{min-width:0}
+@media(max-width:760px){.maker{grid-template-columns:1fr}}
+.name-big{font:500 clamp(1.8rem,5vw,3.2rem)/1.05 var(--display);margin:6px 0 10px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.chips span{font:400 .74rem/1 var(--mono);letter-spacing:.08em;border:1px solid var(--line);border-radius:30px;padding:8px 12px;color:var(--muted)}
+.contact{display:grid;gap:12px}
+.contact .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;border:1px solid var(--line);border-radius:4px;padding:14px}
+.contact .row code{font:400 .92rem var(--mono);overflow-wrap:anywhere;flex:1 1 200px;user-select:all}
+.btn{display:inline-block;font:500 .78rem/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;text-decoration:none;color:#1a0f0a;background:var(--dust);border-radius:4px;padding:12px 16px}
+.btn:hover{background:#f1b88a}
+footer{padding:36px 0 20px;color:var(--muted);font-size:.9rem}
+footer ul{margin:8px 0 0;padding-left:18px}
+footer li{margin:4px 0}
+
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<canvas id="gl" aria-hidden="true"></canvas>
+
+<header class="nav"><div class="wrap">
+  <a class="brand" href="#top">ARES DESCENT</a>
+  <nav aria-label="Sections"><a href="#facts">Facts</a><a href="#you">Your age</a><a href="#air">Air</a><a href="#live">Life</a><a href="#maker">Creator</a></nav>
+</div></header>
+
+<main id="top">
+<div class="scene" id="scene">
+  <section class="cap"><div class="wrap">
+    <div class="eyebrow">A scroll-through guide to the Red Planet</div>
+    <h1>ARES<span>DESCENT</span></h1>
+    <p>Scroll to split Mars in half, fall through the gap and land on its surface.</p>
+    <div class="cue"><i></i>Scroll</div>
+  </div></section>
+  <section class="cap"><div class="wrap">
+    <div class="eyebrow">Step 1 · Interior</div>
+    <h2>Cut it open.</h2>
+    <p>Under a thin rocky crust sits a mantle and an iron-rich core about 1,800 km in radius. NASA's InSight lander listened to marsquakes and found that this core is liquid.</p>
+  </div></section>
+  <section class="cap"><div class="wrap">
+    <div class="eyebrow">Step 2 · Descent</div>
+    <h2>Fall through the gap.</h2>
+    <p>Mars is just over half as wide as Earth, 6,792 km across at the equator. Everything here is smaller, colder and quieter than home.</p>
+  </div></section>
+  <section class="cap"><div class="wrap">
+    <div class="eyebrow">Step 3 · Surface</div>
+    <h2>Touch down.</h2>
+    <p>Iron oxide dust paints the ground rust red. The air is 95% carbon dioxide and less than 1% as dense as ours. Keep scrolling.</p>
+  </div></section>
+</div>
+
+<div class="content"><div class="wrap stack">
+
+  <section class="sheet" id="facts">
+    <h3>Mars at a glance</h3>
+    <h2>Small, cold, and a long way out.</h2>
+    <p class="lead">The fourth planet from the Sun is a desert world with seasons, weather, volcanoes and the remains of ancient water.</p>
+    <div class="stats">
+      <div class="stat"><b>6,792<small>km</small></b><span>Equatorial diameter, 53% of Earth's</span></div>
+      <div class="stat"><b>24 h 39 m</b><span>One solar day, called a sol</span></div>
+      <div class="stat"><b>687<small>days</small></b><span>One trip around the Sun, about 1.88 Earth years</span></div>
+      <div class="stat"><b>3.73<small>m/s²</small></b><span>Surface gravity, 38% of Earth's</span></div>
+      <div class="stat"><b>−60<small>°C</small></b><span>Average temperature, from about −133 to +27 °C</span></div>
+      <div class="stat"><b>25.19<small>°</small></b><span>Axial tilt, close to Earth's 23.4°, so Mars has four seasons</span></div>
+      <div class="stat"><b>1.52<small>AU</small></b><span>Average distance from the Sun, 228 million km</span></div>
+      <div class="stat"><b>2</b><span>Moons, Phobos and Deimos</span></div>
+    </div>
+  </section>
+
+  <section class="sheet" id="you">
+    <h3>Try it</h3>
+    <h2>How old are you on Mars?</h2>
+    <p class="lead">A Mars year lasts 686.98 Earth days, so you are younger there. Gravity is also lower, so you would weigh much less. The values below are examples; change them.</p>
+    <div class="fields">
+      <div><label for="dob">Date of birth</label><input id="dob" type="date" value="2000-01-01"></div>
+      <div><label for="wt">Your weight (kg)</label><input id="wt" type="number" min="1" max="400" step="0.5" value="70" inputmode="decimal"></div>
+    </div>
+    <div class="out" aria-live="polite">
+      <div><b id="o-age">–</b><span id="o-age-s"></span></div>
+      <div><b id="o-next">–</b><span>Until your next Mars birthday</span></div>
+      <div><b id="o-wt">–</b><span>What your body would weigh on Mars (mass stays the same, weight drops to 38%)</span></div>
+    </div>
+  </section>
+
+  <section class="sheet" id="year">
+    <h3>Orbits</h3>
+    <h2>One Mars year, nearly two Earth years.</h2>
+    <p class="lead">Mars travels slower and has a longer path. While it makes one lap around the Sun, Earth makes almost two. Its orbit is also stretched: 206.7 million km from the Sun at the closest point, 249.3 million km at the farthest, so seasons on Mars last about twice as long as ours.</p>
+    <div class="orbit">
+      <canvas id="orbit" role="img" aria-label="Animated top-down view of Earth and Mars orbiting the Sun"></canvas>
+      <div class="orbit-bar">
+        <div class="counter">Earth years <b id="ey">0.00</b> · Mars years <b id="my">0.00</b></div>
+        <button id="play" type="button">Pause</button>
+      </div>
+      <p class="note">Orbits are drawn as circles to keep the picture simple. One second shows 60 days.</p>
+    </div>
+  </section>
+
+  <section class="sheet" id="air">
+    <h3>Atmosphere</h3>
+    <h2>Air you cannot breathe.</h2>
+    <div class="cols">
+      <div>
+        <p>The Martian atmosphere is almost pure carbon dioxide. Surface pressure averages about 6.4 millibars, less than one hundredth of Earth's, which is about 1,013 millibars.</p>
+        <p>Dust storms can grow big enough to wrap the planet for weeks. Fine dust scattered in the thin air gives the daytime sky a butterscotch tint, while sunsets look blue.</p>
+        <p>Only 0.16% of the air is oxygen. On Earth it is nearly 21%.</p>
+      </div>
+      <div>
+        <div class="comp">
+          <div class="comp-row"><div class="name"><span>Mars</span><span class="mono">6.4 mbar</span></div>
+            <div class="bar" role="img" aria-label="Mars air: 95.1% carbon dioxide, 2.59% nitrogen, 0.16% oxygen, 1.94% argon">
+              <i class="c-co2" style="flex:95.1"></i><i class="c-n2" style="flex:2.59"></i><i class="c-o2" style="flex:.16"></i><i class="c-ar" style="flex:1.94"></i><i class="c-ot" style="flex:.21"></i></div></div>
+          <div class="comp-row"><div class="name"><span>Earth</span><span class="mono">1,013 mbar</span></div>
+            <div class="bar" role="img" aria-label="Earth air: 78.08% nitrogen, 20.95% oxygen, 0.93% argon, 0.04% carbon dioxide">
+              <i class="c-co2" style="flex:.04"></i><i class="c-n2" style="flex:78.08"></i><i class="c-o2" style="flex:20.95"></i><i class="c-ar" style="flex:.93"></i></div></div>
+        </div>
+        <div class="legend">
+          <span><s class="c-co2"></s>CO₂</span><span><s class="c-n2"></s>N₂</span><span><s class="c-o2"></s>O₂</span><span><s class="c-ar"></s>Ar</span><span><s class="c-ot"></s>Other</span>
+        </div>
+        <p class="note">Mars: CO₂ 95.1% · N₂ 2.59% · Ar 1.94% · O₂ 0.16% · CO 0.06%</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sheet" id="cold">
+    <h3>Temperature</h3>
+    <h2>Colder than any place you have lived.</h2>
+    <p class="lead">Thin air holds almost no heat. A summer afternoon near the equator can feel mild, then the same spot drops far below freezing after sunset.</p>
+    <svg class="chart" viewBox="0 0 640 200" role="img" aria-label="Temperature ranges: Mars from minus 133 to plus 27 degrees Celsius, Earth records from minus 89 to plus 57">
+      <g id="tchart"></g>
+    </svg>
+    <p class="note">Mars: winter pole to summer day (ESA). Earth: record lowest and highest air temperatures.</p>
+  </section>
+
+  <section class="sheet" id="live">
+    <h3>Could people live there?</h3>
+    <h2>Not yet, and not without a lot of help.</h2>
+    <p class="lead">Mars is the most Earth-like place we can reach, which is a low bar. Every basic need would have to be built or brought along.</p>
+    <dl class="dl">
+      <div><dt>Air</dt><dd>Almost no oxygen. The MOXIE experiment on NASA's Perseverance rover split oxygen out of Martian carbon dioxide and hit its target rate of 6 grams an hour, about what a modest tree produces.</dd></div>
+      <div><dt>Pressure</dt><dd>At around 6 mbar, far below the Armstrong limit where body fluids begin to boil. Anyone outside needs a full pressure suit.</dd></div>
+      <div><dt>Radiation</dt><dd>Mars lost its global magnetic field and has a thin atmosphere, so the ground gets more radiation than Earth's. Habitats would need shielding, such as buried walls, water, or lava tubes.</dd></div>
+      <div><dt>Soil</dt><dd>Martian dust contains perchlorates, salts that are toxic to people and would need to be removed before farming.</dd></div>
+      <div><dt>Water</dt><dd>Plenty of ice sits at the poles and under the surface at middle latitudes. Melting and cleaning it is the easier part.</dd></div>
+      <div><dt>Distance</dt><dd>A trip takes about seven months. Radio messages need 3 to 22 minutes each way, so there is no live conversation with home.</dd></div>
+      <div><dt>Gravity</dt><dd>At 38% of Earth's, bones and muscles would likely weaken. Nobody knows yet how people cope with that over years.</dd></div>
+    </dl>
+  </section>
+
+  <section class="sheet" id="land">
+    <h3>Landforms</h3>
+    <h2>Mountains and canyons on a giant scale.</h2>
+    <div class="cols">
+      <div>
+        <h3>Height</h3>
+        <div class="hbars" id="hb-height"></div>
+        <p class="note">Olympus Mons is the tallest known volcano in the Solar System, about 22 km above its surroundings.</p>
+      </div>
+      <div>
+        <h3>Length</h3>
+        <div class="hbars" id="hb-len"></div>
+        <p class="note">Valles Marineris runs roughly 4,000 km and reaches about 7 km deep, around ten times longer and several times deeper than the Grand Canyon.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sheet" id="moons">
+    <h3>Moons</h3>
+    <h2>Two lumpy rocks.</h2>
+    <div class="cols">
+      <p><b>Phobos</b> is about 27 × 22 × 18 km. It circles Mars in about 7 hours 39 minutes, faster than Mars spins, so from the surface it rises in the west. It is slowly spiralling inward and is expected to break apart or crash in tens of millions of years.</p>
+      <p><b>Deimos</b> is smaller, about 15 × 12 × 11 km, and orbits farther out. From Mars it looks like a bright star, not a disc. Both moons are dark and cratered, and they may be captured asteroids.</p>
+    </div>
+  </section>
+
+  <section class="sheet" id="explore">
+    <h3>Exploration</h3>
+    <h2>Six decades of visitors.</h2>
+    <ol class="tl">
+      <li><b>1965</b><span>Mariner 4 flies past and sends the first close-up photos of another planet's surface.</span></li>
+      <li><b>1976</b><span>Viking 1 and 2 land and run experiments searching for signs of life.</span></li>
+      <li><b>1997</b><span>Pathfinder lands with Sojourner, the first rover on Mars.</span></li>
+      <li><b>2004</b><span>Spirit and Opportunity find evidence that liquid water once shaped the ground.</span></li>
+      <li><b>2012</b><span>Curiosity lands in Gale crater and finds an ancient lake environment.</span></li>
+      <li><b>2021</b><span>Perseverance lands in Jezero crater. Its helicopter Ingenuity makes the first powered, controlled flight on another world. China's Zhurong rover arrives the same year.</span></li>
+    </ol>
+  </section>
+
+  <section class="sheet" id="maker">
+    <h3>Creator</h3>
+    <div class="maker">
+      <div>
+        <div class="name-big">Aidin Hamzeii</div>
+        <p style="margin:0">AI programmer working in Python. Holds the Harvard CS50x certificate. This site is a front-end experiment: a procedural 3D planet and terrain, generated in the browser with Three.js and no image files.</p>
+        <div class="chips"><span>Python</span><span>AI / ML</span><span>CS50x · Harvard</span><span>Three.js</span><span>HTML · CSS · JS</span></div>
+      </div>
+      <div class="contact">
+        <div class="row"><code id="mail">aidinhamzeii1388h@gmail.com</code><button id="copy" type="button">Copy</button></div>
+        <div><a class="btn" id="mailto" href="mailto:aidinhamzeii1388h@gmail.com">Email me</a> <a class="btn" id="gh" href="#" target="_blank" rel="noopener" hidden>GitHub</a></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Facts and figures from:
+    <ul>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html" target="_blank" rel="noopener">NASA NSSDC, Mars Fact Sheet</a></li>
+      <li><a href="https://www.esa.int/Our_Activities/Space_Science/Mars_Express/Facts_about_Mars" target="_blank" rel="noopener">ESA, Facts about Mars</a></li>
+      <li><a href="https://www.haystack.mit.edu/news/haystack-led-moxie-experiment-reliably-produces-oxygen-on-mars" target="_blank" rel="noopener">MIT Haystack, MOXIE oxygen experiment</a></li>
+    </ul>
+  </footer>
+
+</div></div>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+'use strict';
+var $=function(s){return document.querySelector(s)};
+var clamp=function(x,a,b){return Math.min(b,Math.max(a,x))};
+var lerp=function(a,b,t){return a+(b-a)*t};
+var ss=function(a,b,x){var t=clamp((x-a)/(b-a),0,1);return t*t*(3-2*t)};
+var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+var css=getComputedStyle(document.documentElement);
+var tok=function(n){return css.getPropertyValue(n).trim()};
+
+/* ---------- noise ---------- */
+function hash(x,y,z){var h=Math.imul(x,374761393)^Math.imul(y,668265263)^Math.imul(z,1274126177);h=Math.imul(h^(h>>>13),1103515245);return((h^(h>>>16))>>>0)/4294967295}
+function vnoise(x,y,z){
+  var xi=Math.floor(x),yi=Math.floor(y),zi=Math.floor(z),xf=x-xi,yf=y-yi,zf=z-zi;
+  var u=xf*xf*(3-2*xf),v=yf*yf*(3-2*yf),w=zf*zf*(3-2*zf);
+  var a=hash(xi,yi,zi),b=hash(xi+1,yi,zi),c=hash(xi,yi+1,zi),d=hash(xi+1,yi+1,zi);
+  var e=hash(xi,yi,zi+1),f=hash(xi+1,yi,zi+1),g=hash(xi,yi+1,zi+1),h=hash(xi+1,yi+1,zi+1);
+  var x1=lerp(lerp(a,b,u),lerp(c,d,u),v), x2=lerp(lerp(e,f,u),lerp(g,h,u),v);
+  return lerp(x1,x2,w);
+}
+function fbm(x,y,z,o){var s=0,a=.5,f=1,n=0;for(var i=0;i<o;i++){s+=a*vnoise(x*f,y*f,z*f);n+=a;a*=.5;f*=2.03}return s/n}
+
+/* ---------- widgets (run even without WebGL) ---------- */
+// calculator
+(function(){
+  var dob=$('#dob'),wt=$('#wt');
+  function fmt(n,d){return n.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d})}
+  function calc(){
+    var d=new Date(dob.value+'T00:00:00');
+    if(isNaN(d)||d>new Date()){$('#o-age').textContent='–';$('#o-age-s').textContent='Pick a date in the past.';$('#o-next').textContent='–'}
+    else{
+      var days=(Date.now()-d.getTime())/864e5, my=days/686.98;
+      $('#o-age').textContent=fmt(my,1)+' Mars years';
+      $('#o-age-s').textContent='That is '+fmt(days/365.25,1)+' Earth years.';
+      var left=(1-(my-Math.floor(my)))*686.98;
+      $('#o-next').textContent=fmt(left,0)+' Earth days';
+    }
+    var w=parseFloat(wt.value);
+    $('#o-wt').textContent=isNaN(w)||w<=0?'–':fmt(w*0.38,1)+' kg';
+  }
+  dob.addEventListener('input',calc);wt.addEventListener('input',calc);calc();
+})();
+
+// bars
+(function(){
+  function bars(id,rows,max,color){
+    var el=$(id);
+    rows.forEach(function(r){
+      var d=document.createElement('div');d.className='hb';
+      d.innerHTML='<span>'+r[0]+'</span><div class="track"><i style="width:'+(r[1]/max*100)+'%;background:'+r[3]+'"></i></div><em>'+r[2]+'</em>';
+      el.appendChild(d);
+    });
+  }
+  bars('#hb-height',[['Olympus Mons',22,'22 km',tok('--rust')],['Mauna Kea (base to peak)',10.2,'10.2 km',tok('--ice')],['Mount Everest',8.85,'8.85 km',tok('--ice')]],22);
+  bars('#hb-len',[['Valles Marineris',4000,'~4,000 km',tok('--rust')],['Grand Canyon',446,'446 km',tok('--ice')]],4000);
+})();
+
+// temperature chart
+(function(){
+  var g=$('#tchart'),NS='http://www.w3.org/2000/svg';
+  var X0=40,X1=610,T0=-150,T1=70;
+  var sx=function(t){return X0+(t-T0)/(T1-T0)*(X1-X0)};
+  function el(n,a,txt){var e=document.createElementNS(NS,n);for(var k in a)e.setAttribute(k,a[k]);if(txt!=null)e.textContent=txt;g.appendChild(e);return e}
+  [-150,-100,-50,0,50].forEach(function(t){
+    el('line',{x1:sx(t),x2:sx(t),y1:20,y2:150,'stroke-dasharray':t===0?'4 4':'0'});
+    el('text',{x:sx(t),y:172,'text-anchor':'middle'},(t>0?'+':t<0?'−':'')+Math.abs(t)+' °C');
+  });
+  el('text',{x:sx(0)+6,y:32,'text-anchor':'start'},'water freezes');
+  function range(y,lo,hi,fill,label){
+    el('rect',{x:sx(lo),y:y,width:sx(hi)-sx(lo),height:30,rx:3,fill:fill});
+    el('text',{x:sx(lo),y:y+46,'text-anchor':'middle',class:'t-strong'},(lo<0?'−':'+')+Math.abs(lo));
+    el('text',{x:sx(hi),y:y+46,'text-anchor':'middle',class:'t-strong'},(hi<0?'−':'+')+Math.abs(hi));
+    el('text',{x:sx(lo)+10,y:y+19,'text-anchor':'start',fill:'#1a0f0a',style:'fill:#1a0f0a;font-weight:500'},label);
+  }
+  range(42,-133,27,tok('--rust'),'Mars');
+  range(96,-89,57,tok('--ice'),'Earth records');
+})();
+
+// copy + github
+(function(){
+  var GITHUB_URL=''; // put the GitHub profile link here
+  if(GITHUB_URL){var gh=$('#gh');gh.href=GITHUB_URL;gh.hidden=false}
+  $('#copy').addEventListener('click',function(){
+    var b=this,t=$('#mail').textContent;
+    function ok(){b.textContent='Copied';setTimeout(function(){b.textContent='Copy'},1600)}
+    function sel(){var r=document.createRange();r.selectNodeContents($('#mail'));var s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent='Selected';setTimeout(function(){b.textContent='Copy'},1600)}
+    try{navigator.clipboard.writeText(t).then(ok,sel)}catch(e){sel()}
+  });
+})();
+
+// orbit animation
+(function(){
+  var c=$('#orbit'),ctx=c.getContext('2d'),W=0,H=0,dpr=1;
+  var days=0,running=!reduce,last=0;
+  var col={sun:'#f3b25e',earth:tok('--ice'),mars:tok('--rust'),ring:'rgba(236,227,220,.16)',text:tok('--muted')};
+  function size(){dpr=Math.min(devicePixelRatio||1,2);var r=c.getBoundingClientRect();W=r.width;H=r.height;c.width=Math.round(W*dpr);c.height=Math.round(H*dpr);draw()}
+  function draw(){
+    ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,W,H);
+    var cx=W/2,cy=H/2,R=Math.min(W/2,H/2)*0.9,rE=R/1.524,rM=R;
+    ctx.strokeStyle=col.ring;ctx.lineWidth=1;
+    [rE,rM].forEach(function(r){ctx.beginPath();ctx.arc(cx,cy,r,0,6.2832);ctx.stroke()});
+    var g=ctx.createRadialGradient(cx,cy,0,cx,cy,18);g.addColorStop(0,'#fff1c9');g.addColorStop(.35,col.sun);g.addColorStop(1,'rgba(243,178,94,0)');
+    ctx.fillStyle=g;ctx.beginPath();ctx.arc(cx,cy,18,0,6.2832);ctx.fill();
+    var ae=days/365.25*6.2832,am=days/686.98*6.2832;
+    function planet(r,a,color,rad,label){
+      var x=cx+Math.cos(a)*r,y=cy+Math.sin(a)*r;
+      ctx.fillStyle=color;ctx.beginPath();ctx.arc(x,y,rad,0,6.2832);ctx.fill();
+      ctx.fillStyle=col.text;ctx.font='11px '+getComputedStyle(document.body).getPropertyValue('--mono');ctx.textAlign='center';ctx.fillText(label,x,y-rad-7);
+    }
+    planet(rE,ae,col.earth,6,'Earth');planet(rM,am,col.mars,5,'Mars');
+    $('#ey').textContent=(days/365.25).toFixed(2);$('#my').textContent=(days/686.98).toFixed(2);
+  }
+  function tick(t){
+    if(running){var dt=Math.min(.05,(t-last)/1000||0);days+=dt*60}
+    last=t;draw();requestAnimationFrame(tick);
+  }
+  var ro=window.ResizeObserver?new ResizeObserver(size):null;if(ro)ro.observe(c);else addEventListener('resize',size);
+  size();$('#play').textContent=running?'Pause':'Play';days=40;
+  $('#play').addEventListener('click',function(){running=!running;this.textContent=running?'Pause':'Play'});
+  requestAnimationFrame(tick);
+})();
+
+/* ---------- 3D stage ---------- */
+var THREE=window.THREE;
+var canvas=$('#gl'),renderer;
+if(!THREE){document.documentElement.classList.add('no-gl');return}
+try{renderer=new THREE.WebGLRenderer({canvas:canvas,antialias:true})}catch(e){document.documentElement.classList.add('no-gl');return}
+renderer.outputEncoding=THREE.sRGBEncoding;
+renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));
+
+var scene=new THREE.Scene();
+var SPACE=new THREE.Color(0x0b0908),SKY=new THREE.Color(0x4a2a1c);
+scene.background=SPACE.clone();
+scene.fog=new THREE.FogExp2(0x4a2a1c,0);
+var camera=new THREE.PerspectiveCamera(50,1,.1,1200);
+
+scene.add(new THREE.AmbientLight(0x7a5545,.55));
+var key=new THREE.DirectionalLight(0xffdcc0,1.7);key.position.set(-8,7,9);scene.add(key);
+var coreLight=new THREE.PointLight(0xff8a3c,0,24,1.5);scene.add(coreLight);
+
+// stars
+var starGeo=new THREE.BufferGeometry(),sp=new Float32Array(1800*3);
+for(var i=0;i<1800;i++){var u=Math.random()*2-1,a=Math.random()*6.2832,r=Math.sqrt(1-u*u),d=300+Math.random()*300;sp[i*3]=r*Math.cos(a)*d;sp[i*3+1]=u*d;sp[i*3+2]=r*Math.sin(a)*d}
+starGeo.setAttribute('position',new THREE.BufferAttribute(sp,3));
+var starMat=new THREE.PointsMaterial({color:0xe9dccf,size:1.5,sizeAttenuation:false,transparent:true,fog:false});
+scene.add(new THREE.Points(starGeo,starMat));
+
+// planet halves
+var R=2;
+var marsMat=new THREE.MeshStandardMaterial({color:0xb4623a,roughness:1,metalness:0});
+function coreTexture(){
+  var c=document.createElement('canvas');c.width=c.height=512;var g=c.getContext('2d');
+  function disc(r,fill){g.beginPath();g.arc(256,256,r,0,6.2832);g.fillStyle=fill;g.fill()}
+  disc(256,'#5a2a1a');                        // crust
+  var m=g.createRadialGradient(256,256,100,256,256,242);m.addColorStop(0,'#c4622e');m.addColorStop(1,'#7e3a20');
+  disc(242,m);                                 // mantle
+  var k=g.createRadialGradient(256,256,0,256,256,140);k.addColorStop(0,'#ffe3b0');k.addColorStop(.6,'#f2a24a');k.addColorStop(1,'#d9692b');
+  disc(140,k);                                 // liquid core
+  g.strokeStyle='rgba(20,8,4,.35)';g.lineWidth=2;[140,242].forEach(function(r){g.beginPath();g.arc(256,256,r,0,6.2832);g.stroke()});
+  var t=new THREE.CanvasTexture(c);t.encoding=THREE.sRGBEncoding;return t;
+}
+var coreTex=coreTexture();
+function half(sign){
+  var geo=new THREE.SphereGeometry(R,96,64,sign<0?-Math.PI/2:Math.PI/2,Math.PI);
+  var uv=geo.attributes.uv;for(var i=0;i<uv.count;i++)uv.setX(i,(sign<0?-.25:.25)+.5*uv.getX(i));
+  var shell=new THREE.Mesh(geo,marsMat);
+  var cut=new THREE.Mesh(new THREE.CircleGeometry(R,96),new THREE.MeshBasicMaterial({map:coreTex,side:THREE.DoubleSide}));
+  cut.rotation.y=sign<0?Math.PI/2:-Math.PI/2;
+  var grp=new THREE.Group();grp.add(shell,cut);scene.add(grp);return grp;
+}
+var left=half(-1),right=half(1);
+
+function marsTexture(){
+  var W=1024,H=512,c=document.createElement('canvas');c.width=W;c.height=H;
+  var g=c.getContext('2d'),img=g.createImageData(W,H),d=img.data;
+  for(var y=0;y<H;y++){
+    var th=(y+.5)/H*Math.PI,sy=Math.cos(th),sr=Math.sin(th),lat=Math.PI/2-th;
+    for(var x=0;x<W;x++){
+      var ph=(x+.5)/W*6.2832,px=-Math.cos(ph)*sr,pz=Math.sin(ph)*sr;
+      var e=fbm(px*2.4+9,sy*2.4,pz*2.4,6);
+      var dark=ss(.5,.64,fbm(px*1.5+3,sy*1.5+7,pz*1.5,4));
+      var gr=fbm(px*16,sy*16,pz*16,3)-.5;
+      var t=clamp(e*1.25-.1+gr*.25,0,1);
+      var r=lerp(150,214,t),gg=lerp(72,128,t),b=lerp(44,86,t);
+      r=lerp(r,78,dark*.7);gg=lerp(gg,40,dark*.7);b=lerp(b,30,dark*.7);
+      var cap=ss(1.12,1.3,Math.abs(lat)+(fbm(px*5,sy*5,pz*5,3)-.5)*.35);
+      r=lerp(r,238,cap);gg=lerp(gg,230,cap);b=lerp(b,224,cap);
+      var i=(y*W+x)*4;d[i]=r;d[i+1]=gg;d[i+2]=b;d[i+3]=255;
+    }
+  }
+  g.putImageData(img,0,0);
+  var tex=new THREE.CanvasTexture(c);tex.wrapS=THREE.RepeatWrapping;tex.encoding=THREE.sRGBEncoding;
+  tex.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());return tex;
+}
+
+// terrain
+var TY=-5.2,TZ=-120,TS=520,TN=200;
+var seed=7;function rnd(){seed=(seed*16807)%2147483647;return(seed-1)/2147483646}
+var craters=[];for(var i=0;i<24;i++)craters.push({x:(rnd()-.5)*TS*.9,z:TZ+(rnd()-.5)*TS*.9,r:8+rnd()*28,d:.8+rnd()*2.2});
+function height(x,z){
+  var h=(fbm(x*.008,1.7,z*.008,5)-.5)*16+(fbm(x*.04,5.1,z*.04,4)-.5)*3.2+(fbm(x*.2,9.3,z*.2,2)-.5)*.5;
+  for(var i=0;i<craters.length;i++){var c=craters[i],dx=x-c.x,dz=z-c.z,r=Math.sqrt(dx*dx+dz*dz)/c.r;
+    if(r<1.7){if(r<1)h-=c.d*(1-r*r);h+=c.d*.45*Math.exp(-Math.pow((r-1)/.18,2))}}
+  return h*(.22+.78*ss(4,40,Math.abs(x)));
+}
+var tGeo=new THREE.PlaneGeometry(TS,TS,TN,TN);tGeo.rotateX(-Math.PI/2);
+(function(){
+  var p=tGeo.attributes.position,cols=new Float32Array(p.count*3),lo=new THREE.Color(0x6e3320),hi=new THREE.Color(0xcf8a58),tmp=new THREE.Color();
+  for(var i=0;i<p.count;i++){
+    var x=p.getX(i),z=p.getZ(i)+TZ,h=height(x,z);p.setY(i,h);
+    var patch=fbm(x*.02,3,z*.02,3),t=clamp((h+5)/10+(patch-.5)*.5,0,1);
+    tmp.copy(lo).lerp(hi,t).multiplyScalar(.75+patch*.4).convertSRGBToLinear();
+    cols[i*3]=tmp.r;cols[i*3+1]=tmp.g;cols[i*3+2]=tmp.b;
+  }
+  tGeo.setAttribute('color',new THREE.BufferAttribute(cols,3));tGeo.computeVertexNormals();
+})();
+var tMat=new THREE.MeshStandardMaterial({vertexColors:true,roughness:1,metalness:0,transparent:true,opacity:0});
+var ground=new THREE.Mesh(tGeo,tMat);ground.position.set(0,TY,TZ);scene.add(ground);
+
+var rockMat=new THREE.MeshStandardMaterial({color:0x5a3224,roughness:1,transparent:true,opacity:0,flatShading:true});
+var rocks=new THREE.InstancedMesh(new THREE.DodecahedronGeometry(1,0),rockMat,460),m4=new THREE.Matrix4(),q=new THREE.Quaternion(),eu=new THREE.Euler(),sc=new THREE.Vector3(),ps=new THREE.Vector3();
+for(var i=0;i<460;i++){
+  var x=(rnd()-.5)*80,z=-2-rnd()*170,s=.12+Math.pow(rnd(),3)*1.1;
+  ps.set(x,TY+height(x,z)+s*.3,z);eu.set(rnd()*6,rnd()*6,rnd()*6);q.setFromEuler(eu);sc.set(s,s*(.55+rnd()*.5),s*(.8+rnd()*.4));
+  m4.compose(ps,q,sc);rocks.setMatrixAt(i,m4);
+}
+scene.add(rocks);
+
+// texture generated after first paint so the page appears instantly
+setTimeout(function(){marsMat.map=marsTexture();marsMat.color.set(0xffffff);marsMat.needsUpdate=true},60);
+
+/* ---------- loop ---------- */
+var sceneEl=$('#scene'),span=1,mx=0,my=0,tx=0,ty=0,smooth=0,clock=new THREE.Clock(),vis=true;
+function resize(){
+  var w=innerWidth,h=innerHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.fov=w/h<1?66:50;camera.updateProjectionMatrix();
+  span=Math.max(1,sceneEl.offsetHeight-h*.35);
+}
+addEventListener('resize',resize);resize();
+addEventListener('pointermove',function(e){tx=e.clientX/innerWidth-.5;ty=e.clientY/innerHeight-.5},{passive:true});
+document.addEventListener('visibilitychange',function(){vis=!document.hidden;if(vis)requestAnimationFrame(frame)});
+var look=new THREE.Vector3();
+function frame(){
+  if(!vis)return;
+  var dt=Math.min(.1,clock.getDelta()),t=clock.elapsedTime;
+  smooth+=(scrollY-smooth)*(reduce?1:1-Math.exp(-dt*5));
+  mx+=(tx-mx)*.05;my+=(ty-my)*.05;
+  var S=clamp(smooth/span,0,1),extra=Math.max(0,smooth-span)*.009;
+  var split=ss(.13,.46,S),fly=ss(.42,.86,S),land=ss(.72,1,S),sky=ss(.55,.92,S);
+  left.position.x=-split*3.6;right.position.x=split*3.6;
+  left.rotation.z=split*.16;right.rotation.z=-split*.16;
+  coreLight.intensity=split*(1-fly*.6)*4;
+  if(marsMat.map&&!reduce)marsMat.map.offset.x=t*.004;
+  camera.position.x=mx*.5*(1-land);
+  camera.position.z=lerp(9.5,-3,fly)-extra;
+  var gy=TY+height(camera.position.x,camera.position.z)+1.5;
+  camera.position.y=Math.max(lerp(0,-2.6,land)-my*.3,gy);
+  look.set(mx*.8,lerp(0,camera.position.y-.7,land)+(-my*.4),camera.position.z-10);
+  camera.lookAt(look);
+  scene.background.copy(SPACE).lerp(SKY,sky);scene.fog.color.copy(scene.background);scene.fog.density=.0105*sky;
+  starMat.opacity=1-sky;
+  tMat.opacity=rockMat.opacity=ss(.38,.7,S);
+  renderer.render(scene,camera);
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
