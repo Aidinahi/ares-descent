@@ -7,6 +7,8 @@
 <meta name="author" content="Aidin Hamzeii">
 <meta name="robots" content="index,follow">
 <meta property="og:type" content="website">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="fa_IR">
 <meta property="og:title" content="Ares Descent">
 <meta property="og:description" content="Scroll to split Mars open, fall through and land on its surface. Facts, orbits, atmosphere and life on the Red Planet.">
 <meta name="twitter:card" content="summary">
@@ -15,7 +17,7 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800&family=Space+Grotesk:wght@500;600&family=Inter:wght@400;500&family=IBM+Plex+Mono:wght@400;500&family=Vazirmatn:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800&family=Space+Grotesk:wght@500;600&family=Inter:wght@400;500&family=IBM+Plex+Mono:wght@400;500&family=Vazirmatn:wght@400;500;600&display=swap">
 <style>
 /* Layout: a fixed WebGL stage (planet splits, camera falls through, lands on terrain) with scroll captions, then dark reading panels floating over the terrain. */
 :root{
@@ -82,7 +84,7 @@ h2{font:600 var(--fs-h2)/1.12 var(--head);letter-spacing:-.012em;margin:0;text-w
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
 .stat{background:var(--panel-solid);padding:20px 20px 18px}
 .stat b{display:block;font:500 clamp(1.6rem,3.2vw,2.2rem)/1.1 var(--head);color:var(--fg);font-variant-numeric:tabular-nums}
-.stat b small{font-size:.5em;color:var(--dust);margin-left:.3em;letter-spacing:.04em}
+.stat b small{font-size:.5em;color:var(--dust);margin-inline-start:.3em;letter-spacing:.04em}
 .stat span{display:block;margin-top:8px;color:var(--muted);font-size:.92rem;line-height:1.45}
 
 /* calculator */
@@ -91,7 +93,7 @@ h2{font:600 var(--fs-h2)/1.12 var(--head);letter-spacing:-.012em;margin:0;text-w
 label{display:block;font:400 .72rem/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
 input{width:100%;font:400 1.05rem var(--body);color:var(--fg);background:var(--field);border:1px solid var(--line);border-radius:4px;padding:12px 14px}
 .out{margin-top:22px;display:grid;gap:14px}
-.out div{border-left:2px solid var(--rust);padding-left:14px}
+.out div{border-inline-start:2px solid var(--rust);padding-inline-start:14px}
 .out b{display:block;font:500 clamp(1.6rem,3.4vw,2.3rem)/1.15 var(--head);font-variant-numeric:tabular-nums}
 .out span{color:var(--muted);font-size:.95rem}
 
@@ -136,9 +138,9 @@ button:hover{border-color:var(--dust);color:var(--dust)}
 @media(max-width:560px){.dl div{grid-template-columns:1fr}}
 
 /* timeline */
-.tl{list-style:none;margin:0;padding:0;border-left:1px solid var(--line)}
-.tl li{display:grid;grid-template-columns:78px 1fr;gap:6px 18px;padding:0 0 22px 22px;position:relative}
-.tl li::before{content:"";position:absolute;left:-4px;top:.55em;width:7px;height:7px;border-radius:50%;background:var(--rust);box-shadow:0 0 10px rgba(255,82,51,.7)}
+.tl{list-style:none;margin:0;padding:0;border-inline-start:1px solid var(--line)}
+.tl li{display:grid;grid-template-columns:78px 1fr;gap:6px 18px;padding:0 0 22px;padding-inline-start:22px;position:relative}
+.tl li::before{content:"";position:absolute;inset-inline-start:-4px;top:.55em;width:7px;height:7px;border-radius:50%;background:var(--rust);box-shadow:0 0 10px rgba(255,82,51,.7)}
 .tl b{font:400 .82rem/1.6 var(--mono);color:var(--dust)}
 .tl span{color:var(--text2)}
 
@@ -150,7 +152,7 @@ button:hover{border-color:var(--dust);color:var(--dust)}
 .links a{font:400 .95rem/1.4 var(--mono);color:var(--fg);text-decoration:none;border-bottom:1px solid var(--line);padding-bottom:3px;overflow-wrap:anywhere}
 .links a:hover{color:var(--dust);border-color:var(--dust)}
 footer{padding:36px 0 20px;color:var(--muted);font-size:.9rem}
-footer ul{margin:8px 0 0;padding-left:18px}
+footer ul{margin:8px 0 0;padding-inline-start:18px}
 footer li{margin:4px 0}
 
 
@@ -161,6 +163,21 @@ footer li{margin:4px 0}
 .fig{margin:30px 0 0}
 .fig img{display:block;width:100%;height:auto;max-height:520px;object-fit:cover;border-radius:4px}
 .fig figcaption{margin-top:10px;font:400 .74rem/1.5 var(--mono);color:var(--muted)}
+
+/* language switch + right-to-left layout */
+.lang{font:500 var(--fs-label)/1 var(--mono);letter-spacing:.1em;color:var(--fg);background:rgba(7,10,18,.55);border:1px solid var(--line);border-radius:30px;padding:9px 14px;cursor:pointer;white-space:nowrap}
+.lang:hover{border-color:var(--dust);color:var(--dust)}
+.nav .wrap{gap:12px}
+svg.chart{direction:ltr}
+.links a,.name-big{direction:ltr;unicode-bidi:isolate}
+.comp-row .name .mono{direction:ltr;unicode-bidi:isolate}
+html[lang=fa]{--head:'Vazirmatn','Space Grotesk',system-ui,sans-serif;--body:'Vazirmatn','Inter',system-ui,sans-serif;--mono:'Vazirmatn','IBM Plex Mono',ui-monospace,monospace}
+html[lang=fa] body{line-height:1.95}
+html[lang=fa] h2{line-height:1.4;letter-spacing:0}
+html[lang=fa] body *:not(h1):not(h1 span):not(.brand){letter-spacing:0!important;text-transform:none!important}
+html[lang=fa] .stat b,html[lang=fa] .out b{font-weight:500}
+html[dir=rtl] .sheet::before{background:linear-gradient(270deg,var(--rust),rgba(255,82,51,0) 55%)}
+html[dir=rtl] .cue i{order:2}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 </style>
 </head>
@@ -171,178 +188,179 @@ footer li{margin:4px 0}
 
 <header class="nav"><div class="wrap">
   <a class="brand" href="#top">ARES DESCENT</a>
-  <nav aria-label="Sections"><a href="#facts">Facts</a><a href="#you">Your age</a><a href="#air">Air</a><a href="#live">Life</a><a href="#maker">Creator</a></nav>
+  <nav aria-label="Sections" class="mainnav"><a href="#facts" data-i18n="k1">Facts</a><a href="#you" data-i18n="k2">Your age</a><a href="#air" data-i18n="k3">Air</a><a href="#live" data-i18n="k4">Life</a><a href="#maker" data-i18n="k5">Creator</a></nav>
+  <button class="lang" id="lang" type="button" aria-label="Switch language">فارسی</button>
 </div></header>
 
 <main id="top">
 <div class="scene" id="scene">
   <section class="cap"><div class="wrap">
-    <div class="eyebrow">A scroll-through guide to the Red Planet</div>
+    <div class="eyebrow" data-i18n="k6">A scroll-through guide to the Red Planet</div>
     <h1>ARES<span>DESCENT</span></h1>
-    <p>Scroll to split Mars in half, fall through the gap and land on its surface.</p>
-    <div class="cue"><i></i>Scroll</div>
+    <p data-i18n="k7">Scroll to split Mars in half, fall through the gap and land on its surface.</p>
+    <div class="cue" data-i18n="k8"><i></i>Scroll</div>
   </div></section>
   <section class="cap"><div class="wrap">
-    <div class="eyebrow">Step 1 · Interior</div>
-    <h2>Cut it open.</h2>
-    <p>Under a thin rocky crust sits a mantle and an iron-rich core about 1,800 km in radius. NASA's InSight lander listened to marsquakes and found that this core is liquid.</p>
+    <div class="eyebrow" data-i18n="k9">Step 1 · Interior</div>
+    <h2 data-i18n="k10">Cut it open.</h2>
+    <p data-i18n="k11">Under a thin rocky crust sits a mantle and an iron-rich core about 1,800 km in radius. NASA's InSight lander listened to marsquakes and found that this core is liquid.</p>
   </div></section>
   <section class="cap"><div class="wrap">
-    <div class="eyebrow">Step 2 · Descent</div>
-    <h2>Fall through the gap.</h2>
-    <p>Mars is just over half as wide as Earth, 6,792 km across at the equator. Everything here is smaller, colder and quieter than home.</p>
+    <div class="eyebrow" data-i18n="k12">Step 2 · Descent</div>
+    <h2 data-i18n="k13">Fall through the gap.</h2>
+    <p data-i18n="k14">Mars is just over half as wide as Earth, 6,792 km across at the equator. Everything here is smaller, colder and quieter than home.</p>
   </div></section>
   <section class="cap"><div class="wrap">
-    <div class="eyebrow">Step 3 · Surface</div>
-    <h2>Touch down.</h2>
-    <p>Iron oxide dust paints the ground rust red. The air is 95% carbon dioxide and less than 1% as dense as ours. Keep scrolling.</p>
+    <div class="eyebrow" data-i18n="k15">Step 3 · Surface</div>
+    <h2 data-i18n="k16">Touch down.</h2>
+    <p data-i18n="k17">Iron oxide dust paints the ground rust red. The air is 95% carbon dioxide and less than 1% as dense as ours. Keep scrolling.</p>
   </div></section>
 </div>
 
 <div class="content"><div class="wrap stack">
 
   <section class="sheet" id="facts">
-    <h3>Mars at a glance</h3>
-    <h2>Small, cold, and a long way out.</h2>
-    <p class="lead">The fourth planet from the Sun is a desert world with seasons, weather, volcanoes and the remains of ancient water.</p>
+    <h3 data-i18n="k18">Mars at a glance</h3>
+    <h2 data-i18n="k19">Small, cold, and a long way out.</h2>
+    <p class="lead" data-i18n="k20">The fourth planet from the Sun is a desert world with seasons, weather, volcanoes and the remains of ancient water.</p>
     <div class="stats">
-      <div class="stat"><b>6,792<small>km</small></b><span>Equatorial diameter, 53% of Earth's</span></div>
-      <div class="stat"><b>24 h 39 m</b><span>One solar day, called a sol</span></div>
-      <div class="stat"><b>687<small>days</small></b><span>One trip around the Sun, about 1.88 Earth years</span></div>
-      <div class="stat"><b>3.73<small>m/s²</small></b><span>Surface gravity, 38% of Earth's</span></div>
-      <div class="stat"><b>−60<small>°C</small></b><span>Average temperature, from about −133 to +27 °C</span></div>
-      <div class="stat"><b>25.19<small>°</small></b><span>Axial tilt, close to Earth's 23.4°, so Mars has four seasons</span></div>
-      <div class="stat"><b>1.52<small>AU</small></b><span>Average distance from the Sun, 228 million km</span></div>
-      <div class="stat"><b>2</b><span>Moons, Phobos and Deimos</span></div>
+      <div class="stat"><b data-i18n="k21">6,792<small>km</small></b><span data-i18n="k22">Equatorial diameter, 53% of Earth's</span></div>
+      <div class="stat"><b data-i18n="k23">24 h 39 m</b><span data-i18n="k24">One solar day, called a sol</span></div>
+      <div class="stat"><b data-i18n="k25">687<small>days</small></b><span data-i18n="k26">One trip around the Sun, about 1.88 Earth years</span></div>
+      <div class="stat"><b data-i18n="k27">3.73<small>m/s²</small></b><span data-i18n="k28">Surface gravity, 38% of Earth's</span></div>
+      <div class="stat"><b data-i18n="k29">−60<small>°C</small></b><span data-i18n="k30">Average temperature, from about −133 to +27 °C</span></div>
+      <div class="stat"><b data-i18n="k31">25.19<small>°</small></b><span data-i18n="k32">Axial tilt, close to Earth's 23.4°, so Mars has four seasons</span></div>
+      <div class="stat"><b data-i18n="k33">1.52<small>AU</small></b><span data-i18n="k34">Average distance from the Sun, 228 million km</span></div>
+      <div class="stat"><b>2</b><span data-i18n="k35">Moons, Phobos and Deimos</span></div>
     </div>
   </section>
 
   <section class="sheet" id="you">
-    <h3>Try it</h3>
-    <h2>How old are you on Mars?</h2>
-    <p class="lead">A Mars year lasts 686.98 Earth days, so you are younger there. Gravity is also lower, so you would weigh much less. The values below are examples; change them.</p>
+    <h3 data-i18n="k36">Try it</h3>
+    <h2 data-i18n="k37">How old are you on Mars?</h2>
+    <p class="lead" data-i18n="k38">A Mars year lasts 686.98 Earth days, so you are younger there. Gravity is also lower, so you would weigh much less. The values below are examples; change them.</p>
     <div class="fields">
-      <div><label for="dob">Date of birth</label><input id="dob" type="date" value="2000-01-01"></div>
-      <div><label for="wt">Your weight (kg)</label><input id="wt" type="number" min="1" max="400" step="0.5" value="70" inputmode="decimal"></div>
+      <div><label for="dob" data-i18n="k39">Date of birth</label><input id="dob" type="date" value="2000-01-01"></div>
+      <div><label for="wt" data-i18n="k40">Your weight (kg)</label><input id="wt" type="number" min="1" max="400" step="0.5" value="70" inputmode="decimal"></div>
     </div>
     <div class="out" aria-live="polite">
       <div><b id="o-age">–</b><span id="o-age-s"></span></div>
-      <div><b id="o-next">–</b><span>Until your next Mars birthday</span></div>
-      <div><b id="o-wt">–</b><span>What your body would weigh on Mars (mass stays the same, weight drops to 38%)</span></div>
+      <div><b id="o-next">–</b><span data-i18n="k41">Until your next Mars birthday</span></div>
+      <div><b id="o-wt">–</b><span data-i18n="k42">What your body would weigh on Mars (mass stays the same, weight drops to 38%)</span></div>
     </div>
   </section>
 
   <section class="sheet" id="year">
-    <h3>Orbits</h3>
-    <h2>One Mars year, nearly two Earth years.</h2>
-    <p class="lead">Mars travels slower and has a longer path. While it makes one lap around the Sun, Earth makes almost two. Its orbit is also stretched: 206.7 million km from the Sun at the closest point, 249.3 million km at the farthest, so seasons on Mars last about twice as long as ours.</p>
+    <h3 data-i18n="k43">Orbits</h3>
+    <h2 data-i18n="k44">One Mars year, nearly two Earth years.</h2>
+    <p class="lead" data-i18n="k45">Mars travels slower and has a longer path. While it makes one lap around the Sun, Earth makes almost two. Its orbit is also stretched: 206.7 million km from the Sun at the closest point, 249.3 million km at the farthest, so seasons on Mars last about twice as long as ours.</p>
     <div class="orbit">
-      <canvas id="orbit" role="img" aria-label="Animated top-down view of Earth and Mars orbiting the Sun"></canvas>
+      <canvas id="orbit" role="img" aria-label="Animated top-down view of Earth and Mars orbiting the Sun" data-i18n-attr="aria-label|a3"></canvas>
       <div class="orbit-bar">
-        <div class="counter">Earth years <b id="ey">0.00</b> · Mars years <b id="my">0.00</b></div>
+        <div class="counter"><span data-i18n="k46">Earth years</span> <b id="ey">0.00</b> · <span data-i18n="k47">Mars years</span> <b id="my">0.00</b></div>
         <button id="play" type="button">Pause</button>
       </div>
-      <p class="note">Orbits are drawn as circles to keep the picture simple. One second shows 60 days.</p>
+      <p class="note" data-i18n="k48">Orbits are drawn as circles to keep the picture simple. One second shows 60 days.</p>
     </div>
   </section>
 
   <section class="sheet" id="air">
-    <h3>Atmosphere</h3>
-    <h2>Air you cannot breathe.</h2>
+    <h3 data-i18n="k49">Atmosphere</h3>
+    <h2 data-i18n="k50">Air you cannot breathe.</h2>
     <div class="cols">
       <div>
-        <p>The Martian atmosphere is almost pure carbon dioxide. Surface pressure averages about 6.4 millibars, less than one hundredth of Earth's, which is about 1,013 millibars.</p>
-        <p>Dust storms can grow big enough to wrap the planet for weeks. Fine dust scattered in the thin air gives the daytime sky a butterscotch tint, while sunsets look blue.</p>
-        <p>Only 0.16% of the air is oxygen. On Earth it is nearly 21%.</p>
+        <p data-i18n="k51">The Martian atmosphere is almost pure carbon dioxide. Surface pressure averages about 6.4 millibars, less than one hundredth of Earth's, which is about 1,013 millibars.</p>
+        <p data-i18n="k52">Dust storms can grow big enough to wrap the planet for weeks. Fine dust scattered in the thin air gives the daytime sky a butterscotch tint, while sunsets look blue.</p>
+        <p data-i18n="k53">Only 0.16% of the air is oxygen. On Earth it is nearly 21%.</p>
       </div>
       <div>
         <div class="comp">
-          <div class="comp-row"><div class="name"><span>Mars</span><span class="mono">6.4 mbar</span></div>
-            <div class="bar" role="img" aria-label="Mars air: 95.1% carbon dioxide, 2.59% nitrogen, 0.16% oxygen, 1.94% argon">
+          <div class="comp-row"><div class="name"><span data-i18n="k54">Mars</span><span class="mono">6.4 mbar</span></div>
+            <div class="bar" role="img" aria-label="Mars air: 95.1% carbon dioxide, 2.59% nitrogen, 0.16% oxygen, 1.94% argon" data-i18n-attr="aria-label|a4">
               <i class="c-co2" style="flex:95.1"></i><i class="c-n2" style="flex:2.59"></i><i class="c-o2" style="flex:.16"></i><i class="c-ar" style="flex:1.94"></i><i class="c-ot" style="flex:.21"></i></div></div>
-          <div class="comp-row"><div class="name"><span>Earth</span><span class="mono">1,013 mbar</span></div>
-            <div class="bar" role="img" aria-label="Earth air: 78.08% nitrogen, 20.95% oxygen, 0.93% argon, 0.04% carbon dioxide">
+          <div class="comp-row"><div class="name"><span data-i18n="k55">Earth</span><span class="mono">1,013 mbar</span></div>
+            <div class="bar" role="img" aria-label="Earth air: 78.08% nitrogen, 20.95% oxygen, 0.93% argon, 0.04% carbon dioxide" data-i18n-attr="aria-label|a5">
               <i class="c-co2" style="flex:.04"></i><i class="c-n2" style="flex:78.08"></i><i class="c-o2" style="flex:20.95"></i><i class="c-ar" style="flex:.93"></i></div></div>
         </div>
         <div class="legend">
-          <span><s class="c-co2"></s>CO₂</span><span><s class="c-n2"></s>N₂</span><span><s class="c-o2"></s>O₂</span><span><s class="c-ar"></s>Ar</span><span><s class="c-ot"></s>Other</span>
+          <span><s class="c-co2"></s>CO₂</span><span><s class="c-n2"></s>N₂</span><span><s class="c-o2"></s>O₂</span><span><s class="c-ar"></s>Ar</span><span data-i18n="k56"><s class="c-ot"></s>Other</span>
         </div>
-        <p class="note">Mars: CO₂ 95.1% · N₂ 2.59% · Ar 1.94% · O₂ 0.16% · CO 0.06%</p>
+        <p class="note" data-i18n="k57">Mars: CO₂ 95.1% · N₂ 2.59% · Ar 1.94% · O₂ 0.16% · CO 0.06%</p>
       </div>
     </div>
-  <figure class="fig"><img src="img/haze.jpg" width="1400" height="1093" loading="lazy" alt="A thin layered haze along the curved horizon of Mars, seen from orbit"><figcaption>The thin atmosphere appears as layers of haze above the horizon. Image from a NASA orbiter.</figcaption></figure>
+  <figure class="fig"><img src="img/haze.jpg" width="1400" height="1093" loading="lazy" alt="A thin layered haze along the curved horizon of Mars, seen from orbit" data-i18n-attr="alt|a1"><figcaption data-i18n="k58">The thin atmosphere appears as layers of haze above the horizon. Image from a NASA orbiter.</figcaption></figure>
   </section>
 
   <section class="sheet" id="cold">
-    <h3>Temperature</h3>
-    <h2>Colder than any place you have lived.</h2>
-    <p class="lead">Thin air holds almost no heat. A summer afternoon near the equator can feel mild, then the same spot drops far below freezing after sunset.</p>
-    <svg class="chart" viewBox="0 0 640 200" role="img" aria-label="Temperature ranges: Mars from minus 133 to plus 27 degrees Celsius, Earth records from minus 89 to plus 57">
+    <h3 data-i18n="k59">Temperature</h3>
+    <h2 data-i18n="k60">Colder than any place you have lived.</h2>
+    <p class="lead" data-i18n="k61">Thin air holds almost no heat. A summer afternoon near the equator can feel mild, then the same spot drops far below freezing after sunset.</p>
+    <svg class="chart" viewBox="0 0 640 200" role="img" aria-label="Temperature ranges: Mars from minus 133 to plus 27 degrees Celsius, Earth records from minus 89 to plus 57" data-i18n-attr="aria-label|a6">
       <g id="tchart"></g>
     </svg>
-    <p class="note">Mars: winter pole to summer day (ESA). Earth: record lowest and highest air temperatures.</p>
+    <p class="note" data-i18n="k62">Mars: winter pole to summer day (ESA). Earth: record lowest and highest air temperatures.</p>
   </section>
 
   <section class="sheet" id="live">
-    <h3>Could people live there?</h3>
-    <h2>Not yet, and not without a lot of help.</h2>
-    <p class="lead">Mars is the most Earth-like place we can reach, which is a low bar. Every basic need would have to be built or brought along.</p>
+    <h3 data-i18n="k63">Could people live there?</h3>
+    <h2 data-i18n="k64">Not yet, and not without a lot of help.</h2>
+    <p class="lead" data-i18n="k65">Mars is the most Earth-like place we can reach, which is a low bar. Every basic need would have to be built or brought along.</p>
     <dl class="dl">
-      <div><dt>Air</dt><dd>Almost no oxygen. The MOXIE experiment on NASA's Perseverance rover split oxygen out of Martian carbon dioxide and hit its target rate of 6 grams an hour, about what a modest tree produces.</dd></div>
-      <div><dt>Pressure</dt><dd>At around 6 mbar, far below the Armstrong limit where body fluids begin to boil. Anyone outside needs a full pressure suit.</dd></div>
-      <div><dt>Radiation</dt><dd>Mars lost its global magnetic field and has a thin atmosphere, so the ground gets more radiation than Earth's. Habitats would need shielding, such as buried walls, water, or lava tubes.</dd></div>
-      <div><dt>Soil</dt><dd>Martian dust contains perchlorates, salts that are toxic to people and would need to be removed before farming.</dd></div>
-      <div><dt>Water</dt><dd>Plenty of ice sits at the poles and under the surface at middle latitudes. Melting and cleaning it is the easier part.</dd></div>
-      <div><dt>Distance</dt><dd>A trip takes about seven months. Radio messages need 3 to 22 minutes each way, so there is no live conversation with home.</dd></div>
-      <div><dt>Gravity</dt><dd>At 38% of Earth's, bones and muscles would likely weaken. Nobody knows yet how people cope with that over years.</dd></div>
+      <div><dt data-i18n="k3">Air</dt><dd data-i18n="k72">Almost no oxygen. The MOXIE experiment on NASA's Perseverance rover split oxygen out of Martian carbon dioxide and hit its target rate of 6 grams an hour, about what a modest tree produces.</dd></div>
+      <div><dt data-i18n="k66">Pressure</dt><dd data-i18n="k73">At around 6 mbar, far below the Armstrong limit where body fluids begin to boil. Anyone outside needs a full pressure suit.</dd></div>
+      <div><dt data-i18n="k67">Radiation</dt><dd data-i18n="k74">Mars lost its global magnetic field and has a thin atmosphere, so the ground gets more radiation than Earth's. Habitats would need shielding, such as buried walls, water, or lava tubes.</dd></div>
+      <div><dt data-i18n="k68">Soil</dt><dd data-i18n="k75">Martian dust contains perchlorates, salts that are toxic to people and would need to be removed before farming.</dd></div>
+      <div><dt data-i18n="k69">Water</dt><dd data-i18n="k76">Plenty of ice sits at the poles and under the surface at middle latitudes. Melting and cleaning it is the easier part.</dd></div>
+      <div><dt data-i18n="k70">Distance</dt><dd data-i18n="k77">A trip takes about seven months. Radio messages need 3 to 22 minutes each way, so there is no live conversation with home.</dd></div>
+      <div><dt data-i18n="k71">Gravity</dt><dd data-i18n="k78">At 38% of Earth's, bones and muscles would likely weaken. Nobody knows yet how people cope with that over years.</dd></div>
     </dl>
   </section>
 
   <section class="sheet" id="land">
-    <h3>Landforms</h3>
-    <h2>Mountains and canyons on a giant scale.</h2>
+    <h3 data-i18n="k79">Landforms</h3>
+    <h2 data-i18n="k80">Mountains and canyons on a giant scale.</h2>
     <div class="cols">
       <div>
-        <h3>Height</h3>
+        <h3 data-i18n="k81">Height</h3>
         <div class="hbars" id="hb-height"></div>
-        <p class="note">Olympus Mons is the tallest known volcano in the Solar System, about 22 km above its surroundings.</p>
+        <p class="note" data-i18n="k83">Olympus Mons is the tallest known volcano in the Solar System, about 22 km above its surroundings.</p>
       </div>
       <div>
-        <h3>Length</h3>
+        <h3 data-i18n="k82">Length</h3>
         <div class="hbars" id="hb-len"></div>
-        <p class="note">Valles Marineris runs roughly 4,000 km and reaches about 7 km deep, around ten times longer and several times deeper than the Grand Canyon.</p>
+        <p class="note" data-i18n="k84">Valles Marineris runs roughly 4,000 km and reaches about 7 km deep, around ten times longer and several times deeper than the Grand Canyon.</p>
       </div>
     </div>
   </section>
 
   <section class="sheet" id="moons">
-    <h3>Moons</h3>
-    <h2>Two lumpy rocks.</h2>
+    <h3 data-i18n="k85">Moons</h3>
+    <h2 data-i18n="k86">Two lumpy rocks.</h2>
     <div class="cols">
-      <p><b>Phobos</b> is about 27 × 22 × 18 km. It circles Mars in about 7 hours 39 minutes, faster than Mars spins, so from the surface it rises in the west. It is slowly spiralling inward and is expected to break apart or crash in tens of millions of years.</p>
-      <p><b>Deimos</b> is smaller, about 15 × 12 × 11 km, and orbits farther out. From Mars it looks like a bright star, not a disc. Both moons are dark and cratered, and they may be captured asteroids.</p>
+      <p data-i18n="k87"><b>Phobos</b> is about 27 × 22 × 18 km. It circles Mars in about 7 hours 39 minutes, faster than Mars spins, so from the surface it rises in the west. It is slowly spiralling inward and is expected to break apart or crash in tens of millions of years.</p>
+      <p data-i18n="k88"><b>Deimos</b> is smaller, about 15 × 12 × 11 km, and orbits farther out. From Mars it looks like a bright star, not a disc. Both moons are dark and cratered, and they may be captured asteroids.</p>
     </div>
   </section>
 
   <section class="sheet" id="explore">
-    <h3>Exploration</h3>
-    <h2>Six decades of visitors.</h2>
-    <figure class="fig" style="margin:0 0 26px"><img src="img/rover.jpg" width="660" height="440" loading="lazy" alt="A NASA rover taking a self-portrait on rocky ground on Mars"><figcaption>A NASA rover self-portrait on the surface of Mars.</figcaption></figure>
+    <h3 data-i18n="k89">Exploration</h3>
+    <h2 data-i18n="k90">Six decades of visitors.</h2>
+    <figure class="fig" style="margin:0 0 26px"><img src="img/rover.jpg" width="660" height="440" loading="lazy" alt="A NASA rover taking a self-portrait on rocky ground on Mars" data-i18n-attr="alt|a2"><figcaption data-i18n="k91">A NASA rover self-portrait on the surface of Mars.</figcaption></figure>
     <ol class="tl">
-      <li><b>1965</b><span>Mariner 4 flies past and sends the first close-up photos of another planet's surface.</span></li>
-      <li><b>1976</b><span>Viking 1 and 2 land and run experiments searching for signs of life.</span></li>
-      <li><b>1997</b><span>Pathfinder lands with Sojourner, the first rover on Mars.</span></li>
-      <li><b>2004</b><span>Spirit and Opportunity find evidence that liquid water once shaped the ground.</span></li>
-      <li><b>2012</b><span>Curiosity lands in Gale crater and finds an ancient lake environment.</span></li>
-      <li><b>2021</b><span>Perseverance lands in Jezero crater. Its helicopter Ingenuity makes the first powered, controlled flight on another world. China's Zhurong rover arrives the same year.</span></li>
+      <li><b>1965</b><span data-i18n="k92">Mariner 4 flies past and sends the first close-up photos of another planet's surface.</span></li>
+      <li><b>1976</b><span data-i18n="k93">Viking 1 and 2 land and run experiments searching for signs of life.</span></li>
+      <li><b>1997</b><span data-i18n="k94">Pathfinder lands with Sojourner, the first rover on Mars.</span></li>
+      <li><b>2004</b><span data-i18n="k95">Spirit and Opportunity find evidence that liquid water once shaped the ground.</span></li>
+      <li><b>2012</b><span data-i18n="k96">Curiosity lands in Gale crater and finds an ancient lake environment.</span></li>
+      <li><b>2021</b><span data-i18n="k97">Perseverance lands in Jezero crater. Its helicopter Ingenuity makes the first powered, controlled flight on another world. China's Zhurong rover arrives the same year.</span></li>
     </ol>
   </section>
 
   <section class="sheet" id="maker">
-    <h3>Creator</h3>
+    <h3 data-i18n="k5">Creator</h3>
     <div class="maker">
       <div class="name-big">Aidin Hamzeii</div>
-      <div class="role">Developer &amp; Programmer</div>
+      <div class="role" data-i18n="k98">Developer &amp; Programmer</div>
       <div class="links">
         <a href="https://github.com/Aidinahi" target="_blank" rel="noopener">github.com/Aidinahi</a>
         <a href="mailto:aidinhamzeii1388h@gmail.com">aidinhamzeii1388h@gmail.com</a>
@@ -351,7 +369,7 @@ footer li{margin:4px 0}
   </section>
 
   <footer>
-    Mars photographs from NASA and public sources. Facts and figures from:
+    <div class="ftxt" data-i18n="k99">Mars photographs from NASA and public sources. Facts and figures from:</div>
     <ul>
       <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html" target="_blank" rel="noopener">NASA NSSDC, Mars Fact Sheet</a></li>
       <li><a href="https://www.esa.int/Our_Activities/Space_Science/Mars_Express/Facts_about_Mars" target="_blank" rel="noopener">ESA, Facts about Mars</a></li>
@@ -374,39 +392,79 @@ var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').mat
 var css=getComputedStyle(document.documentElement);
 var tok=function(n){return css.getPropertyValue(n).trim()};
 
+/* ---------- language (English / Persian) ---------- */
+var LANG='en';
+try{if(localStorage.getItem('ares-lang')==='fa')LANG='fa'}catch(e){}
+var FA={"k1": "حقایق", "k2": "سن شما", "k3": "هوا", "k4": "زندگی", "k5": "سازنده", "k6": "راهنمایی اسکرولی به دنیای سیاره‌ی سرخ", "k7": "اسکرول کنید تا مریخ از وسط باز شود، از شکاف عبور کنید و روی سطحش فرود بیایید.", "k8": "<i></i>اسکرول", "k9": "مرحله 1 · درون سیاره", "k10": "بازش کن.", "k11": "زیر یک پوسته‌ی سنگی نازک، گوشته و هسته‌ای غنی از آهن با شعاع حدود 1,800 کیلومتر قرار دارد. فرودگر اینسایت ناسا به لرزه‌های مریخ گوش داد و فهمید که این هسته مایع است.", "k12": "مرحله 2 · فرود", "k13": "از شکاف عبور کن.", "k14": "قطر مریخ کمی بیشتر از نصف زمین است و در استوا 6,792 کیلومتر است. همه‌چیز اینجا کوچک‌تر، سردتر و آرام‌تر از خانه‌ی ماست.", "k15": "مرحله 3 · سطح", "k16": "فرود بیا.", "k17": "غبار اکسید آهن زمین را سرخ‌رنگ کرده است. هوا 95% دی‌اکسید کربن است و چگالی‌اش کمتر از 1% هوای زمین است. به اسکرول ادامه دهید.", "k18": "مریخ در یک نگاه", "k19": "کوچک، سرد و بسیار دور.", "k20": "چهارمین سیاره از خورشید دنیایی بیابانی است با فصل، آب‌وهوا، آتشفشان و بازمانده‌های آب باستانی.", "k21": "<bdi>6,792</bdi><small>کیلومتر</small>", "k22": "قطر در استوا، 53% قطر زمین", "k23": "<bdi>24</bdi> ساعت و <bdi>39</bdi> دقیقه", "k24": "یک روز خورشیدی که سول نامیده می‌شود", "k25": "<bdi>687</bdi><small>روز</small>", "k26": "یک دور گردش به‌دور خورشید، حدود 1.88 سال زمینی", "k27": "<bdi>3.73</bdi><small>m/s²</small>", "k28": "گرانش سطحی، 38% گرانش زمین", "k29": "<bdi>−60</bdi><small>°C</small>", "k30": "میانگین دما؛ از حدود <bdi>−133</bdi> تا <bdi>+27</bdi> درجه‌ی سانتی‌گراد", "k31": "<bdi>25.19</bdi><small>°</small>", "k32": "شیب محور، نزدیک به 23.4 درجه‌ی زمین، پس مریخ چهار فصل دارد", "k33": "<bdi>1.52</bdi><small>AU</small>", "k34": "میانگین فاصله از خورشید، 228 میلیون کیلومتر", "k35": "قمر، فوبوس و دیموس", "k36": "امتحان کنید", "k37": "روی مریخ چند سالتان است؟", "k38": "یک سال مریخی 686.98 روز زمینی طول می‌کشد، پس آنجا جوان‌تر هستید. گرانش هم کمتر است و وزن شما خیلی کمتر می‌شود. مقادیر زیر نمونه هستند؛ تغییرشان دهید.", "k39": "تاریخ تولد", "k40": "وزن شما (کیلوگرم)", "k41": "تا تولد مریخی بعدی شما", "k42": "وزن بدن شما روی مریخ (جرم ثابت می‌ماند، وزن به 38% می‌رسد)", "k43": "مدارها", "k44": "یک سال مریخی، تقریباً دو سال زمینی.", "k45": "مریخ آهسته‌تر حرکت می‌کند و مسیر درازتری دارد. تا او یک دور به‌دور خورشید می‌گردد، زمین تقریباً دو دور می‌زند. مدارش کشیده هم هست: در نزدیک‌ترین نقطه 206.7 میلیون کیلومتر و در دورترین نقطه 249.3 میلیون کیلومتر از خورشید فاصله دارد، برای همین فصل‌های مریخ حدود دو برابر فصل‌های ما طول می‌کشند.", "k46": "سال زمینی", "k47": "سال مریخی", "k48": "برای سادگی، مدارها دایره‌ای رسم شده‌اند. هر ثانیه 60 روز را نشان می‌دهد.", "k49": "جو", "k50": "هوایی که نمی‌شود نفس کشید.", "k51": "جو مریخ تقریباً دی‌اکسید کربن خالص است. فشار سطح به‌طور میانگین حدود 6.4 میلی‌بار است، یعنی کمتر از یک‌صدم فشار زمین که حدود 1,013 میلی‌بار است.", "k52": "طوفان‌های گرد و غبار می‌توانند آن‌قدر بزرگ شوند که هفته‌ها سیاره را در برگیرند. غبار ریز در هوای رقیق به آسمان روز رنگی کهربایی می‌دهد، ولی غروب‌ها آبی دیده می‌شوند.", "k53": "فقط 0.16% هوا اکسیژن است. در زمین این رقم نزدیک به 21% است.", "k54": "مریخ", "k55": "زمین", "k56": "<s class=\"c-ot\"></s>سایر", "k57": "مریخ: <bdi>CO₂ 95.1% · N₂ 2.59% · Ar 1.94% · O₂ 0.16% · CO 0.06%</bdi>", "k58": "جو رقیق به‌شکل لایه‌هایی از مه بالای افق دیده می‌شود. تصویر از یک مدارگرد ناسا.", "k59": "دما", "k60": "سردتر از هر جایی که تا حالا زندگی کرده‌اید.", "k61": "هوای رقیق تقریباً گرما را نگه نمی‌دارد. یک بعدازظهر تابستانی نزدیک استوا می‌تواند ملایم باشد، ولی همان نقطه بعد از غروب بسیار پایین‌تر از صفر می‌رود.", "k62": "مریخ: از قطب زمستانی تا روز تابستانی (ESA). زمین: رکورد کمترین و بیشترین دمای هوا.", "k63": "آیا انسان‌ها می‌توانند آنجا زندگی کنند؟", "k64": "هنوز نه، و نه بدون کمک فراوان.", "k65": "مریخ شبیه‌ترین جایی به زمین است که می‌توانیم به آن برسیم، که معیار بالایی نیست. هر نیاز اولیه‌ای باید ساخته یا همراه برده شود.", "k66": "فشار", "k67": "پرتوها", "k68": "خاک", "k69": "آب", "k70": "فاصله", "k71": "گرانش", "k72": "تقریباً اکسیژنی وجود ندارد. آزمایش MOXIE روی مریخ‌نورد پرسویرنس ناسا از دی‌اکسید کربن مریخ اکسیژن جدا کرد و به نرخ هدف 6 گرم در ساعت رسید، حدوداً به‌اندازه‌ی یک درخت معمولی.", "k73": "فشار حدود 6 میلی‌بار است، بسیار کمتر از حد آرمسترانگ که مایعات بدن شروع به جوشیدن می‌کنند. هر کسی بیرون باشد به لباس فشاری کامل نیاز دارد.", "k74": "مریخ میدان مغناطیسی سراسری‌اش را از دست داده و جو نازکی دارد، برای همین سطحش پرتوهای بیشتری از زمین می‌گیرد. زیستگاه‌ها به محافظ نیاز دارند، مثل دیوارهای زیرخاکی، آب یا تونل‌های گدازه.", "k75": "غبار مریخ پرکلرات دارد، نمک‌هایی که برای انسان سمی‌اند و پیش از کشاورزی باید حذف شوند.", "k76": "یخ فراوانی در قطب‌ها و زیر سطح در عرض‌های میانی وجود دارد. ذوب و تمیز کردنش بخش آسان‌تر ماجراست.", "k77": "سفر حدود هفت ماه طول می‌کشد. پیام‌های رادیویی در هر مسیر 3 تا 22 دقیقه زمان می‌برند، پس گفتگوی زنده با زمین ممکن نیست.", "k78": "با 38% گرانش زمین، استخوان‌ها و ماهیچه‌ها احتمالاً ضعیف می‌شوند. هنوز کسی نمی‌داند انسان‌ها در طول سال‌ها چطور با آن کنار می‌آیند.", "k79": "پدیده‌های سطحی", "k80": "کوه‌ها و دره‌هایی در مقیاس غول‌آسا.", "k81": "ارتفاع", "k82": "طول", "k83": "اولمپوس مونس بلندترین آتشفشان شناخته‌شده در منظومه‌ی شمسی است، حدود 22 کیلومتر بالاتر از محیط اطرافش.", "k84": "دره‌های مارینر حدود 4,000 کیلومتر امتداد دارد و تا حدود 7 کیلومتر عمیق می‌شود، یعنی حدود ده برابر طولانی‌تر و چند برابر عمیق‌تر از گرند کانیون.", "k85": "قمرها", "k86": "دو صخره‌ی ناهموار.", "k87": "<b>فوبوس</b> حدود 27 × 22 × 18 کیلومتر است. در حدود 7 ساعت و 39 دقیقه به‌دور مریخ می‌چرخد، سریع‌تر از چرخش خود مریخ، برای همین از سطح مریخ از غرب طلوع می‌کند. آرام‌آرام به‌سمت داخل مارپیچ می‌شود و انتظار می‌رود ظرف ده‌ها میلیون سال تکه‌تکه شود یا سقوط کند.", "k88": "<b>دیموس</b> کوچک‌تر است، حدود 15 × 12 × 11 کیلومتر، و دورتر می‌چرخد. از مریخ مثل یک ستاره‌ی درخشان دیده می‌شود، نه یک قرص. هر دو قمر تیره و پر از دهانه‌اند و شاید سیارک‌های به‌دام‌افتاده باشند.", "k89": "اکتشاف", "k90": "شش دهه میهمان.", "k91": "سلفی یک مریخ‌نورد ناسا روی سطح مریخ.", "k92": "مارینر 4 از کنار مریخ عبور می‌کند و اولین عکس‌های نزدیک از سطح یک سیاره‌ی دیگر را می‌فرستد.", "k93": "وایکینگ 1 و 2 فرود می‌آیند و آزمایش‌هایی برای یافتن نشانه‌های حیات انجام می‌دهند.", "k94": "پتفایندر همراه سوجورنر، اولین مریخ‌نورد، فرود می‌آید.", "k95": "اسپیریت و اپورچونیتی شواهدی می‌یابند که آب مایع زمانی سطح را شکل داده است.", "k96": "کیوریاسیتی در دهانه‌ی گیل فرود می‌آید و محیطی باستانی با دریاچه پیدا می‌کند.", "k97": "پرسویرنس در دهانه‌ی جزیرو فرود می‌آید. هلیکوپترش اینجنیوتی اولین پرواز قدرتی و کنترل‌شده روی دنیایی دیگر را انجام می‌دهد. مریخ‌نورد ژورونگ چین هم همان سال می‌رسد.", "k98": "توسعه‌دهنده و برنامه‌نویس", "k99": "عکس‌های مریخ از ناسا و منابع عمومی است. حقایق و آمار از:", "a1": "مه نازک و لایه‌لایه در امتداد افق خمیده‌ی مریخ، از مدار", "a2": "یک مریخ‌نورد ناسا در حال گرفتن سلفی روی زمین سنگی مریخ", "a3": "نمای متحرک از بالا از گردش زمین و مریخ به‌دور خورشید", "a4": "ترکیب هوای مریخ: 95.1% دی‌اکسید کربن، 2.59% نیتروژن، 0.16% اکسیژن، 1.94% آرگون", "a5": "ترکیب هوای زمین: 78.08% نیتروژن، 20.95% اکسیژن، 0.93% آرگون، 0.04% دی‌اکسید کربن", "a6": "بازه‌ی دما: مریخ از منفی 133 تا مثبت 27 درجه‌ی سانتی‌گراد، رکوردهای زمین از منفی 89 تا مثبت 57"};
+var DT={
+  en:{earth:'Earth',mars:'Mars',freeze:'water freezes',earthrec:'Earth records',marsyears:'Mars years',thatis:function(n){return 'That is '+n+' Earth years.'},earthdays:'Earth days',kg:'kg',pick:'Pick a date in the past.',pause:'Pause',play:'Play',km:'km',olympus:'Olympus Mons',mauna:'Mauna Kea (base to peak)',everest:'Mount Everest',valles:'Valles Marineris',grand:'Grand Canyon',btn:'فارسی',btnlabel:'Switch to Persian'},
+  fa:{earth:'زمین',mars:'مریخ',freeze:'انجماد آب',earthrec:'رکوردهای زمین',marsyears:'سال مریخی',thatis:function(n){return 'این معادل '+n+' سال زمینی است.'},earthdays:'روز زمینی',kg:'کیلوگرم',pick:'تاریخی در گذشته انتخاب کنید.',pause:'توقف',play:'پخش',km:'کیلومتر',olympus:'اولمپوس مونس',mauna:'ماونا کیا (از پایه تا قله)',everest:'قله‌ی اورست',valles:'دره‌های مارینر',grand:'گرند کانیون',btn:'EN',btnlabel:'Switch to English'}
+};
+function D(k,a){var v=DT[LANG][k];return typeof v==='function'?v(a):v}
+var NFc={};
+function nf(n,d){var k=LANG+d,f=NFc[k];if(!f)f=NFc[k]=new Intl.NumberFormat(LANG==='fa'?'fa-IR':'en-US',{minimumFractionDigits:d,maximumFractionDigits:d});return f.format(n)}
+function faDigits(str){
+  return str.split(/(<[^>]*>)/).map(function(p){
+    return p.charAt(0)==='<'?p:p.replace(/(\d)\.(?=\d)/g,'$1٫').replace(/(\d),(?=\d{3})/g,'$1٬').replace(/\d/g,function(d){return '۰۱۲۳۴۵۶۷۸۹'.charAt(d)});
+  }).join('');
+}
+var onLang=[];
+var i18nEls=[].slice.call(document.querySelectorAll('[data-i18n]')),EN={};
+i18nEls.forEach(function(e){EN[e.getAttribute('data-i18n')]=e.innerHTML});
+var i18nAttr=[].slice.call(document.querySelectorAll('[data-i18n-attr]'));
+i18nAttr.forEach(function(e){var p=e.getAttribute('data-i18n-attr').split('|');EN[p[1]]=e.getAttribute(p[0])});
+function applyLang(){
+  var fa=LANG==='fa',root=document.documentElement;
+  root.lang=fa?'fa':'en';root.dir=fa?'rtl':'ltr';
+  i18nEls.forEach(function(e){var k=e.getAttribute('data-i18n');e.innerHTML=fa?faDigits(FA[k]):EN[k]});
+  i18nAttr.forEach(function(e){var p=e.getAttribute('data-i18n-attr').split('|');e.setAttribute(p[0],fa?faDigits(FA[p[1]]):EN[p[1]])});
+  var b=$('#lang');b.textContent=D('btn');b.setAttribute('aria-label',D('btnlabel'));
+  onLang.forEach(function(f){f()});
+}
+function setLang(l){
+  LANG=l;try{localStorage.setItem('ares-lang',l)}catch(e){}
+  applyLang();
+}
+
 /* ---------- widgets (run even without WebGL) ---------- */
+var rustC=tok('--rust'),iceC=tok('--ice');
 // calculator
 (function(){
   var dob=$('#dob'),wt=$('#wt');
-  function fmt(n,d){return n.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d})}
   function calc(){
     var d=new Date(dob.value+'T00:00:00');
-    if(isNaN(d)||d>new Date()){$('#o-age').textContent='–';$('#o-age-s').textContent='Pick a date in the past.';$('#o-next').textContent='–'}
+    if(isNaN(d)||d>new Date()){$('#o-age').textContent='–';$('#o-age-s').textContent=D('pick');$('#o-next').textContent='–'}
     else{
-      var days=(Date.now()-d.getTime())/864e5, my=days/686.98;
-      $('#o-age').textContent=fmt(my,1)+' Mars years';
-      $('#o-age-s').textContent='That is '+fmt(days/365.25,1)+' Earth years.';
+      var days=(Date.now()-d.getTime())/864e5,my=days/686.98;
+      $('#o-age').textContent=nf(my,1)+' '+D('marsyears');
+      $('#o-age-s').textContent=D('thatis',nf(days/365.25,1));
       var left=(1-(my-Math.floor(my)))*686.98;
-      $('#o-next').textContent=fmt(left,0)+' Earth days';
+      $('#o-next').textContent=nf(left,0)+' '+D('earthdays');
     }
     var w=parseFloat(wt.value);
-    $('#o-wt').textContent=isNaN(w)||w<=0?'–':fmt(w*0.38,1)+' kg';
+    $('#o-wt').textContent=isNaN(w)||w<=0?'–':nf(w*0.38,1)+' '+D('kg');
   }
-  dob.addEventListener('input',calc);wt.addEventListener('input',calc);calc();
+  dob.addEventListener('input',calc);wt.addEventListener('input',calc);onLang.push(calc);
 })();
 
 // bars
 (function(){
-  function bars(id,rows,max,color){
-    var el=$(id);
+  function bars(id,rows,max){
+    var el=$(id);el.textContent='';
     rows.forEach(function(r){
       var d=document.createElement('div');d.className='hb';
-      d.innerHTML='<span>'+r[0]+'</span><div class="track"><i style="width:'+(r[1]/max*100)+'%;background:'+r[3]+'"></i></div><em>'+r[2]+'</em>';
-      el.appendChild(d);
+      var sp=document.createElement('span');sp.textContent=r[0];
+      var tr=document.createElement('div');tr.className='track';
+      var i=document.createElement('i');i.style.width=(r[1]/max*100)+'%';i.style.background=r[3];tr.appendChild(i);
+      var em=document.createElement('em');em.setAttribute('dir','auto');em.textContent=r[2];
+      d.appendChild(sp);d.appendChild(tr);d.appendChild(em);el.appendChild(d);
     });
   }
-  bars('#hb-height',[['Olympus Mons',22,'22 km',tok('--rust')],['Mauna Kea (base to peak)',10.2,'10.2 km',tok('--ice')],['Mount Everest',8.85,'8.85 km',tok('--ice')]],22);
-  bars('#hb-len',[['Valles Marineris',4000,'~4,000 km',tok('--rust')],['Grand Canyon',446,'446 km',tok('--ice')]],4000);
+  function build(){
+    bars('#hb-height',[[D('olympus'),22,nf(22,0)+' '+D('km'),rustC],[D('mauna'),10.2,nf(10.2,1)+' '+D('km'),iceC],[D('everest'),8.85,nf(8.85,2)+' '+D('km'),iceC]],22);
+    bars('#hb-len',[[D('valles'),4000,'~'+nf(4000,0)+' '+D('km'),rustC],[D('grand'),446,nf(446,0)+' '+D('km'),iceC]],4000);
+  }
+  onLang.push(build);
 })();
 
 // temperature chart
@@ -415,26 +473,33 @@ var tok=function(n){return css.getPropertyValue(n).trim()};
   var X0=40,X1=610,T0=-150,T1=70;
   var sx=function(t){return X0+(t-T0)/(T1-T0)*(X1-X0)};
   function el(n,a,txt){var e=document.createElementNS(NS,n);for(var k in a)e.setAttribute(k,a[k]);if(txt!=null)e.textContent=txt;g.appendChild(e);return e}
-  [-150,-100,-50,0,50].forEach(function(t){
-    el('line',{x1:sx(t),x2:sx(t),y1:20,y2:150,'stroke-dasharray':t===0?'4 4':'0'});
-    el('text',{x:sx(t),y:172,'text-anchor':'middle'},(t>0?'+':t<0?'−':'')+Math.abs(t)+' °C');
-  });
-  el('text',{x:sx(0)+6,y:32,'text-anchor':'start'},'water freezes');
+  function sg(t){return (t>0?'+':t<0?'−':'')+nf(Math.abs(t),0)}
   function range(y,lo,hi,fill,label){
     el('rect',{x:sx(lo),y:y,width:sx(hi)-sx(lo),height:30,rx:3,fill:fill});
-    el('text',{x:sx(lo),y:y+46,'text-anchor':'middle',class:'t-strong'},(lo<0?'−':'+')+Math.abs(lo));
-    el('text',{x:sx(hi),y:y+46,'text-anchor':'middle',class:'t-strong'},(hi<0?'−':'+')+Math.abs(hi));
-    el('text',{x:sx(lo)+10,y:y+19,'text-anchor':'start',fill:'#1a0805',style:'fill:#1a0805;font-weight:500'},label);
+    el('text',{x:sx(lo),y:y+46,'text-anchor':'middle',class:'t-strong'},sg(lo));
+    el('text',{x:sx(hi),y:y+46,'text-anchor':'middle',class:'t-strong'},sg(hi));
+    el('text',{x:sx(lo)+10,y:y+19,'text-anchor':'start',style:'fill:#1a0805;font-weight:500'},label);
   }
-  range(42,-133,27,tok('--rust'),'Mars');
-  range(96,-89,57,tok('--ice'),'Earth records');
+  function build(){
+    g.textContent='';
+    [-150,-100,-50,0,50].forEach(function(t){
+      el('line',{x1:sx(t),x2:sx(t),y1:20,y2:150,'stroke-dasharray':t===0?'4 4':'0'});
+      el('text',{x:sx(t),y:172,'text-anchor':'middle'},sg(t)+' °C');
+    });
+    el('text',{x:sx(0)+6,y:32,'text-anchor':'start'},D('freeze'));
+    range(42,-133,27,rustC,D('mars'));
+    range(96,-89,57,iceC,D('earthrec'));
+  }
+  onLang.push(build);
 })();
 
 // orbit animation
 (function(){
-  var c=$('#orbit'),ctx=c.getContext('2d'),W=0,H=0,dpr=1;
-  var days=0,running=!reduce,last=0;
-  var col={sun:'#f3b25e',earth:tok('--ice'),mars:tok('--rust'),ring:'rgba(190,215,255,.18)',text:tok('--muted')};
+  var c=$('#orbit'),ctx=c.getContext('2d'),W=0,H=0,dpr=1,FONT='11px monospace';
+  var days=40,running=!reduce,last=0;
+  var col={sun:'#f3b25e',earth:iceC,mars:rustC,ring:'rgba(190,215,255,.18)',text:tok('--muted')};
+  function updFont(){FONT='11px '+getComputedStyle(document.documentElement).getPropertyValue('--mono')}
+  function playLabel(){$('#play').textContent=running?D('pause'):D('play')}
   function size(){dpr=Math.min(devicePixelRatio||1,2);var r=c.getBoundingClientRect();W=r.width;H=r.height;c.width=Math.round(W*dpr);c.height=Math.round(H*dpr);draw()}
   function draw(){
     ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,W,H);
@@ -447,20 +512,24 @@ var tok=function(n){return css.getPropertyValue(n).trim()};
     function planet(r,a,color,rad,label){
       var x=cx+Math.cos(a)*r,y=cy+Math.sin(a)*r;
       ctx.fillStyle=color;ctx.beginPath();ctx.arc(x,y,rad,0,6.2832);ctx.fill();
-      ctx.fillStyle=col.text;ctx.font='11px '+getComputedStyle(document.body).getPropertyValue('--mono');ctx.textAlign='center';ctx.fillText(label,x,y-rad-7);
+      ctx.fillStyle=col.text;ctx.font=FONT;ctx.textAlign='center';ctx.fillText(label,x,y-rad-7);
     }
-    planet(rE,ae,col.earth,6,'Earth');planet(rM,am,col.mars,5,'Mars');
-    $('#ey').textContent=(days/365.25).toFixed(2);$('#my').textContent=(days/686.98).toFixed(2);
+    planet(rE,ae,col.earth,6,D('earth'));planet(rM,am,col.mars,5,D('mars'));
+    $('#ey').textContent=nf(days/365.25,2);$('#my').textContent=nf(days/686.98,2);
   }
   function tick(t){
     if(running){var dt=Math.min(.05,(t-last)/1000||0);days+=dt*60}
     last=t;draw();requestAnimationFrame(tick);
   }
   var ro=window.ResizeObserver?new ResizeObserver(size):null;if(ro)ro.observe(c);else addEventListener('resize',size);
-  size();$('#play').textContent=running?'Pause':'Play';days=40;
-  $('#play').addEventListener('click',function(){running=!running;this.textContent=running?'Pause':'Play'});
+  onLang.push(function(){updFont();playLabel()});
+  size();
+  $('#play').addEventListener('click',function(){running=!running;playLabel()});
   requestAnimationFrame(tick);
 })();
+
+$('#lang').addEventListener('click',function(){setLang(LANG==='fa'?'en':'fa')});
+applyLang();
 
 /* ---------- 3D stage ---------- */
 var THREE=window.THREE;
