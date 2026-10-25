@@ -22,9 +22,9 @@
 /* Layout: a fixed WebGL stage (planet splits, camera falls through, lands on terrain) with scroll captions, then dark reading panels floating over the terrain. */
 :root{
   /* palette: deep navy space, hot Mars red, cyan telemetry */
-  --bg:#04060c; --panel:rgba(7,10,18,.78); --panel-solid:#0a0f1a; --field:#060912;
-  --fg:#eef2f8; --text2:#c5cfdf; --muted:#93a0b6; --line:rgba(190,215,255,.14);
-  --rust:#ff5233; --dust:#ff8a5e; --ice:#6fd3ff; --on-accent:#1a0805;
+  --bg:#050810; --panel:rgba(14,17,26,.7); --panel-solid:#12141b; --field:#0b0d13;
+  --fg:#e7e9ee; --text2:#c2c7d2; --muted:#8e97a8; --line:rgba(255,255,255,.1);
+  --rust:#e5432b; --dust:#ff9a4a; --ice:#6fd3ff; --on-accent:#1a0805;
   /* type: Orbitron hero, Space Grotesk headings, Inter body, IBM Plex Mono data; Vazirmatn covers Persian text */
   --display:'Orbitron','Eurostile','Arial Black',system-ui,sans-serif;
   --head:'Space Grotesk','Vazirmatn',system-ui,-apple-system,'Segoe UI',sans-serif;
@@ -52,6 +52,7 @@ a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(-
 .nav nav a{font:500 var(--fs-label)/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);text-decoration:none}
 .nav nav a:hover{color:var(--fg)}
 @media(max-width:640px){.nav nav a:not(:last-child){display:none}}
+@media(max-width:520px){.nav .mainnav{display:none}}
 
 /* scroll scene */
 .scene{position:relative;z-index:1}
@@ -60,7 +61,7 @@ a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(-
 .cap p{max-width:34rem;margin:14px 0 0;color:var(--text2);text-shadow:0 1px 14px rgba(0,0,0,.85)}
 .eyebrow{font:400 .74rem/1.4 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--dust)}
 h1{font:700 var(--fs-hero)/1.02 var(--display);letter-spacing:.08em;text-transform:uppercase;margin:14px 0 0;text-shadow:0 2px 30px rgba(0,0,0,.6)}
-h1 span{display:block;color:var(--rust);font-weight:800;text-shadow:0 0 42px rgba(255,82,51,.5),0 2px 30px rgba(0,0,0,.6)}
+h1 span{display:block;color:var(--rust);font-weight:800;text-shadow:0 0 42px rgba(229,67,43,.5),0 2px 30px rgba(0,0,0,.6)}
 h2{font:600 var(--fs-h2)/1.12 var(--head);letter-spacing:-.012em;margin:0;text-wrap:balance;text-shadow:0 2px 24px rgba(0,0,0,.6)}
 .cue{margin-top:30px;font:400 .72rem/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:12px}
 .cue i{display:block;width:1px;height:34px;background:linear-gradient(var(--dust),transparent)}
@@ -68,9 +69,9 @@ h2{font:600 var(--fs-h2)/1.12 var(--head);letter-spacing:-.012em;margin:0;text-w
 /* content */
 .content{position:relative;z-index:2;padding-bottom:max(40px,env(safe-area-inset-bottom,0px))}
 .stack{display:flex;flex-direction:column;gap:clamp(40px,12vh,130px)}
-.sheet{background:var(--panel);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:6px;padding:clamp(20px,4.5vw,48px)}
+.sheet{background:var(--panel);-webkit-backdrop-filter:blur(18px) saturate(1.25);backdrop-filter:blur(18px) saturate(1.25);border:1px solid var(--line);border-radius:8px;padding:clamp(20px,4.5vw,48px);box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 28px 60px -36px rgba(0,0,0,.85)}
 .sheet{position:relative}
-.sheet::before{content:"";position:absolute;left:-1px;right:-1px;top:-1px;height:1px;background:linear-gradient(90deg,var(--rust),rgba(255,82,51,0) 55%)}
+.sheet::before{content:"";position:absolute;left:-1px;right:-1px;top:-1px;height:1px;background:linear-gradient(90deg,var(--rust),rgba(229,67,43,0) 55%)}
 .sheet h2{text-shadow:none;margin-bottom:12px}
 .sheet h3{font:400 .74rem/1.3 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--dust);margin:0 0 6px}
 .lead{max-width:40rem;color:var(--text2);margin:0 0 28px}
@@ -114,7 +115,7 @@ button:hover{border-color:var(--dust);color:var(--dust)}
 .legend{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:6px;font:400 .76rem/1.3 var(--mono);color:var(--muted)}
 .legend span{display:flex;align-items:center;gap:8px}
 .legend s{display:inline-block;width:10px;height:10px;border-radius:2px}
-.c-co2{background:#ff5233}.c-n2{background:#6fd3ff}.c-o2{background:#ffd166}.c-ar{background:#a78bfa}.c-ot{background:#5b6b86}
+.c-co2{background:#e5432b}.c-n2{background:#6fd3ff}.c-o2{background:#ffd166}.c-ar{background:#a78bfa}.c-ot{background:#5b6b86}
 
 /* temp chart */
 .chart{width:100%;height:auto;display:block}
@@ -140,7 +141,7 @@ button:hover{border-color:var(--dust);color:var(--dust)}
 /* timeline */
 .tl{list-style:none;margin:0;padding:0;border-inline-start:1px solid var(--line)}
 .tl li{display:grid;grid-template-columns:78px 1fr;gap:6px 18px;padding:0 0 22px;padding-inline-start:22px;position:relative}
-.tl li::before{content:"";position:absolute;inset-inline-start:-4px;top:.55em;width:7px;height:7px;border-radius:50%;background:var(--rust);box-shadow:0 0 10px rgba(255,82,51,.7)}
+.tl li::before{content:"";position:absolute;inset-inline-start:-4px;top:.55em;width:7px;height:7px;border-radius:50%;background:var(--rust);box-shadow:0 0 10px rgba(229,67,43,.7)}
 .tl b{font:400 .82rem/1.6 var(--mono);color:var(--dust)}
 .tl span{color:var(--text2)}
 
@@ -176,20 +177,60 @@ html[lang=fa] body{line-height:1.95}
 html[lang=fa] h2{line-height:1.4;letter-spacing:0}
 html[lang=fa] body *:not(h1):not(h1 span):not(.brand){letter-spacing:0!important;text-transform:none!important}
 html[lang=fa] .stat b,html[lang=fa] .out b{font-weight:500}
-html[dir=rtl] .sheet::before{background:linear-gradient(270deg,var(--rust),rgba(255,82,51,0) 55%)}
+html[dir=rtl] .sheet::before{background:linear-gradient(270deg,var(--rust),rgba(229,67,43,0) 55%)}
 html[dir=rtl] .cue i{order:2}
-@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+/* sound button */
+[hidden]{display:none!important}
+.tools{display:flex;align-items:center;gap:8px}
+.snd{display:inline-flex;align-items:center;gap:8px;font:500 var(--fs-label)/1 var(--mono);letter-spacing:.1em;color:var(--fg);background:rgba(20,22,29,.55);border:1px solid var(--line);border-radius:30px;padding:9px 14px;cursor:pointer;white-space:nowrap}
+.snd:hover{border-color:var(--dust);color:var(--dust)}
+.snd .w{opacity:.25;transition:opacity .3s}
+.snd.on{border-color:var(--dust);color:var(--dust)}
+.snd.on .w{opacity:1}
+@media(max-width:560px){.snd span{display:none}.snd{padding:9px 11px}}
+
+/* entrance: panels rise once, charts draw once (classes are added by script, only to panels below the fold) */
+.rv{opacity:0;transform:translateY(26px);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.7,.2,1)}
+.rv.rv-in{opacity:1;transform:none}
+.rv .stat{opacity:0;transform:translateY(10px);transition:opacity .6s ease,transform .6s cubic-bezier(.2,.7,.2,1),background .25s}
+.rv.rv-in .stat{opacity:1;transform:none}
+.rv.rv-in .stat:nth-child(2){transition-delay:.06s}.rv.rv-in .stat:nth-child(3){transition-delay:.12s}.rv.rv-in .stat:nth-child(4){transition-delay:.18s}
+.rv.rv-in .stat:nth-child(5){transition-delay:.24s}.rv.rv-in .stat:nth-child(6){transition-delay:.3s}.rv.rv-in .stat:nth-child(7){transition-delay:.36s}.rv.rv-in .stat:nth-child(8){transition-delay:.42s}
+.stat{transition:background .25s}
+.stat:hover{background:#181b24}
+.rv .hb .track i{transition:width 1s cubic-bezier(.2,.7,.2,1) .25s}
+.rv:not(.rv-in) .hb .track i{width:0!important}
+.rv .bar i{transform-origin:left center;transition:transform .9s cubic-bezier(.2,.7,.2,1) .2s}
+html[dir=rtl] .rv .bar i{transform-origin:right center}
+.rv:not(.rv-in) .bar i{transform:scaleX(0)}
+.chart rect{transform-box:fill-box;transform-origin:left center;transition:transform .9s cubic-bezier(.2,.7,.2,1) .2s}
+.rv:not(.rv-in) .chart rect{transform:scaleX(0)}
+.rv .tl li{opacity:0;transition:opacity .6s ease}
+.rv.rv-in .tl li{opacity:1}
+.rv.rv-in .tl li:nth-child(2){transition-delay:.1s}.rv.rv-in .tl li:nth-child(3){transition-delay:.2s}.rv.rv-in .tl li:nth-child(4){transition-delay:.3s}.rv.rv-in .tl li:nth-child(5){transition-delay:.4s}.rv.rv-in .tl li:nth-child(6){transition-delay:.5s}
+
+/* the surface photo darkens a little as the panels take over */
+#ground::before{content:"";position:absolute;inset:0;z-index:1;background:rgba(5,8,16,var(--dim,0))}
+#ground::after{z-index:2}
+
+/* soft ring that follows the pointer inside interactive sections (the normal cursor stays) */
+#cur{position:fixed;left:0;top:0;width:32px;height:32px;margin:-16px 0 0 -16px;border:1px solid rgba(255,154,74,.85);border-radius:50%;pointer-events:none;z-index:50;opacity:0;transition:opacity .25s,width .2s,height .2s,margin .2s,background .2s}
+#cur.on{opacity:1}
+#cur.big{width:52px;height:52px;margin:-26px 0 0 -26px;background:rgba(255,154,74,.08)}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.rv,.rv .stat,.rv .tl li{transition:none}}
 </style>
 </head>
 <body>
 
 <canvas id="gl" aria-hidden="true"></canvas>
 <div id="ground" aria-hidden="true"></div>
+<div id="cur" aria-hidden="true"></div>
 
 <header class="nav"><div class="wrap">
   <a class="brand" href="#top">ARES DESCENT</a>
   <nav aria-label="Sections" class="mainnav"><a href="#facts" data-i18n="k1">Facts</a><a href="#you" data-i18n="k2">Your age</a><a href="#air" data-i18n="k3">Air</a><a href="#live" data-i18n="k4">Life</a><a href="#maker" data-i18n="k5">Creator</a></nav>
-  <button class="lang" id="lang" type="button" aria-label="Switch language">فارسی</button>
+  <div class="tools"><button class="snd" id="snd" type="button" aria-pressed="false" aria-label="Turn sound on"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path class="w" d="M16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span id="sndl">Sound off</span></button><button class="lang" id="lang" type="button" aria-label="Switch language">فارسی</button></div>
 </div></header>
 
 <main id="top">
@@ -393,12 +434,12 @@ var css=getComputedStyle(document.documentElement);
 var tok=function(n){return css.getPropertyValue(n).trim()};
 
 /* ---------- language (English / Persian) ---------- */
-var LANG='en';
+var LANG='en',STATE={land:0};
 try{if(localStorage.getItem('ares-lang')==='fa')LANG='fa'}catch(e){}
 var FA={"k1": "حقایق", "k2": "سن شما", "k3": "هوا", "k4": "زندگی", "k5": "سازنده", "k6": "راهنمایی اسکرولی به دنیای سیاره‌ی سرخ", "k7": "اسکرول کنید تا مریخ از وسط باز شود، از شکاف عبور کنید و روی سطحش فرود بیایید.", "k8": "<i></i>اسکرول", "k9": "مرحله 1 · درون سیاره", "k10": "بازش کن.", "k11": "زیر یک پوسته‌ی سنگی نازک، گوشته و هسته‌ای غنی از آهن با شعاع حدود 1,800 کیلومتر قرار دارد. فرودگر اینسایت ناسا به لرزه‌های مریخ گوش داد و فهمید که این هسته مایع است.", "k12": "مرحله 2 · فرود", "k13": "از شکاف عبور کن.", "k14": "قطر مریخ کمی بیشتر از نصف زمین است و در استوا 6,792 کیلومتر است. همه‌چیز اینجا کوچک‌تر، سردتر و آرام‌تر از خانه‌ی ماست.", "k15": "مرحله 3 · سطح", "k16": "فرود بیا.", "k17": "غبار اکسید آهن زمین را سرخ‌رنگ کرده است. هوا 95% دی‌اکسید کربن است و چگالی‌اش کمتر از 1% هوای زمین است. به اسکرول ادامه دهید.", "k18": "مریخ در یک نگاه", "k19": "کوچک، سرد و بسیار دور.", "k20": "چهارمین سیاره از خورشید دنیایی بیابانی است با فصل، آب‌وهوا، آتشفشان و بازمانده‌های آب باستانی.", "k21": "<bdi>6,792</bdi><small>کیلومتر</small>", "k22": "قطر در استوا، 53% قطر زمین", "k23": "<bdi>24</bdi> ساعت و <bdi>39</bdi> دقیقه", "k24": "یک روز خورشیدی که سول نامیده می‌شود", "k25": "<bdi>687</bdi><small>روز</small>", "k26": "یک دور گردش به‌دور خورشید، حدود 1.88 سال زمینی", "k27": "<bdi>3.73</bdi><small>m/s²</small>", "k28": "گرانش سطحی، 38% گرانش زمین", "k29": "<bdi>−60</bdi><small>°C</small>", "k30": "میانگین دما؛ از حدود <bdi>−133</bdi> تا <bdi>+27</bdi> درجه‌ی سانتی‌گراد", "k31": "<bdi>25.19</bdi><small>°</small>", "k32": "شیب محور، نزدیک به 23.4 درجه‌ی زمین، پس مریخ چهار فصل دارد", "k33": "<bdi>1.52</bdi><small>AU</small>", "k34": "میانگین فاصله از خورشید، 228 میلیون کیلومتر", "k35": "قمر، فوبوس و دیموس", "k36": "امتحان کنید", "k37": "روی مریخ چند سالتان است؟", "k38": "یک سال مریخی 686.98 روز زمینی طول می‌کشد، پس آنجا جوان‌تر هستید. گرانش هم کمتر است و وزن شما خیلی کمتر می‌شود. مقادیر زیر نمونه هستند؛ تغییرشان دهید.", "k39": "تاریخ تولد", "k40": "وزن شما (کیلوگرم)", "k41": "تا تولد مریخی بعدی شما", "k42": "وزن بدن شما روی مریخ (جرم ثابت می‌ماند، وزن به 38% می‌رسد)", "k43": "مدارها", "k44": "یک سال مریخی، تقریباً دو سال زمینی.", "k45": "مریخ آهسته‌تر حرکت می‌کند و مسیر درازتری دارد. تا او یک دور به‌دور خورشید می‌گردد، زمین تقریباً دو دور می‌زند. مدارش کشیده هم هست: در نزدیک‌ترین نقطه 206.7 میلیون کیلومتر و در دورترین نقطه 249.3 میلیون کیلومتر از خورشید فاصله دارد، برای همین فصل‌های مریخ حدود دو برابر فصل‌های ما طول می‌کشند.", "k46": "سال زمینی", "k47": "سال مریخی", "k48": "برای سادگی، مدارها دایره‌ای رسم شده‌اند. هر ثانیه 60 روز را نشان می‌دهد.", "k49": "جو", "k50": "هوایی که نمی‌شود نفس کشید.", "k51": "جو مریخ تقریباً دی‌اکسید کربن خالص است. فشار سطح به‌طور میانگین حدود 6.4 میلی‌بار است، یعنی کمتر از یک‌صدم فشار زمین که حدود 1,013 میلی‌بار است.", "k52": "طوفان‌های گرد و غبار می‌توانند آن‌قدر بزرگ شوند که هفته‌ها سیاره را در برگیرند. غبار ریز در هوای رقیق به آسمان روز رنگی کهربایی می‌دهد، ولی غروب‌ها آبی دیده می‌شوند.", "k53": "فقط 0.16% هوا اکسیژن است. در زمین این رقم نزدیک به 21% است.", "k54": "مریخ", "k55": "زمین", "k56": "<s class=\"c-ot\"></s>سایر", "k57": "مریخ: <bdi>CO₂ 95.1% · N₂ 2.59% · Ar 1.94% · O₂ 0.16% · CO 0.06%</bdi>", "k58": "جو رقیق به‌شکل لایه‌هایی از مه بالای افق دیده می‌شود. تصویر از یک مدارگرد ناسا.", "k59": "دما", "k60": "سردتر از هر جایی که تا حالا زندگی کرده‌اید.", "k61": "هوای رقیق تقریباً گرما را نگه نمی‌دارد. یک بعدازظهر تابستانی نزدیک استوا می‌تواند ملایم باشد، ولی همان نقطه بعد از غروب بسیار پایین‌تر از صفر می‌رود.", "k62": "مریخ: از قطب زمستانی تا روز تابستانی (ESA). زمین: رکورد کمترین و بیشترین دمای هوا.", "k63": "آیا انسان‌ها می‌توانند آنجا زندگی کنند؟", "k64": "هنوز نه، و نه بدون کمک فراوان.", "k65": "مریخ شبیه‌ترین جایی به زمین است که می‌توانیم به آن برسیم، که معیار بالایی نیست. هر نیاز اولیه‌ای باید ساخته یا همراه برده شود.", "k66": "فشار", "k67": "پرتوها", "k68": "خاک", "k69": "آب", "k70": "فاصله", "k71": "گرانش", "k72": "تقریباً اکسیژنی وجود ندارد. آزمایش MOXIE روی مریخ‌نورد پرسویرنس ناسا از دی‌اکسید کربن مریخ اکسیژن جدا کرد و به نرخ هدف 6 گرم در ساعت رسید، حدوداً به‌اندازه‌ی یک درخت معمولی.", "k73": "فشار حدود 6 میلی‌بار است، بسیار کمتر از حد آرمسترانگ که مایعات بدن شروع به جوشیدن می‌کنند. هر کسی بیرون باشد به لباس فشاری کامل نیاز دارد.", "k74": "مریخ میدان مغناطیسی سراسری‌اش را از دست داده و جو نازکی دارد، برای همین سطحش پرتوهای بیشتری از زمین می‌گیرد. زیستگاه‌ها به محافظ نیاز دارند، مثل دیوارهای زیرخاکی، آب یا تونل‌های گدازه.", "k75": "غبار مریخ پرکلرات دارد، نمک‌هایی که برای انسان سمی‌اند و پیش از کشاورزی باید حذف شوند.", "k76": "یخ فراوانی در قطب‌ها و زیر سطح در عرض‌های میانی وجود دارد. ذوب و تمیز کردنش بخش آسان‌تر ماجراست.", "k77": "سفر حدود هفت ماه طول می‌کشد. پیام‌های رادیویی در هر مسیر 3 تا 22 دقیقه زمان می‌برند، پس گفتگوی زنده با زمین ممکن نیست.", "k78": "با 38% گرانش زمین، استخوان‌ها و ماهیچه‌ها احتمالاً ضعیف می‌شوند. هنوز کسی نمی‌داند انسان‌ها در طول سال‌ها چطور با آن کنار می‌آیند.", "k79": "پدیده‌های سطحی", "k80": "کوه‌ها و دره‌هایی در مقیاس غول‌آسا.", "k81": "ارتفاع", "k82": "طول", "k83": "اولمپوس مونس بلندترین آتشفشان شناخته‌شده در منظومه‌ی شمسی است، حدود 22 کیلومتر بالاتر از محیط اطرافش.", "k84": "دره‌های مارینر حدود 4,000 کیلومتر امتداد دارد و تا حدود 7 کیلومتر عمیق می‌شود، یعنی حدود ده برابر طولانی‌تر و چند برابر عمیق‌تر از گرند کانیون.", "k85": "قمرها", "k86": "دو صخره‌ی ناهموار.", "k87": "<b>فوبوس</b> حدود 27 × 22 × 18 کیلومتر است. در حدود 7 ساعت و 39 دقیقه به‌دور مریخ می‌چرخد، سریع‌تر از چرخش خود مریخ، برای همین از سطح مریخ از غرب طلوع می‌کند. آرام‌آرام به‌سمت داخل مارپیچ می‌شود و انتظار می‌رود ظرف ده‌ها میلیون سال تکه‌تکه شود یا سقوط کند.", "k88": "<b>دیموس</b> کوچک‌تر است، حدود 15 × 12 × 11 کیلومتر، و دورتر می‌چرخد. از مریخ مثل یک ستاره‌ی درخشان دیده می‌شود، نه یک قرص. هر دو قمر تیره و پر از دهانه‌اند و شاید سیارک‌های به‌دام‌افتاده باشند.", "k89": "اکتشاف", "k90": "شش دهه میهمان.", "k91": "سلفی یک مریخ‌نورد ناسا روی سطح مریخ.", "k92": "مارینر 4 از کنار مریخ عبور می‌کند و اولین عکس‌های نزدیک از سطح یک سیاره‌ی دیگر را می‌فرستد.", "k93": "وایکینگ 1 و 2 فرود می‌آیند و آزمایش‌هایی برای یافتن نشانه‌های حیات انجام می‌دهند.", "k94": "پتفایندر همراه سوجورنر، اولین مریخ‌نورد، فرود می‌آید.", "k95": "اسپیریت و اپورچونیتی شواهدی می‌یابند که آب مایع زمانی سطح را شکل داده است.", "k96": "کیوریاسیتی در دهانه‌ی گیل فرود می‌آید و محیطی باستانی با دریاچه پیدا می‌کند.", "k97": "پرسویرنس در دهانه‌ی جزیرو فرود می‌آید. هلیکوپترش اینجنیوتی اولین پرواز قدرتی و کنترل‌شده روی دنیایی دیگر را انجام می‌دهد. مریخ‌نورد ژورونگ چین هم همان سال می‌رسد.", "k98": "توسعه‌دهنده و برنامه‌نویس", "k99": "عکس‌های مریخ از ناسا و منابع عمومی است. حقایق و آمار از:", "a1": "مه نازک و لایه‌لایه در امتداد افق خمیده‌ی مریخ، از مدار", "a2": "یک مریخ‌نورد ناسا در حال گرفتن سلفی روی زمین سنگی مریخ", "a3": "نمای متحرک از بالا از گردش زمین و مریخ به‌دور خورشید", "a4": "ترکیب هوای مریخ: 95.1% دی‌اکسید کربن، 2.59% نیتروژن، 0.16% اکسیژن، 1.94% آرگون", "a5": "ترکیب هوای زمین: 78.08% نیتروژن، 20.95% اکسیژن، 0.93% آرگون، 0.04% دی‌اکسید کربن", "a6": "بازه‌ی دما: مریخ از منفی 133 تا مثبت 27 درجه‌ی سانتی‌گراد، رکوردهای زمین از منفی 89 تا مثبت 57"};
 var DT={
-  en:{earth:'Earth',mars:'Mars',freeze:'water freezes',earthrec:'Earth records',marsyears:'Mars years',thatis:function(n){return 'That is '+n+' Earth years.'},earthdays:'Earth days',kg:'kg',pick:'Pick a date in the past.',pause:'Pause',play:'Play',km:'km',olympus:'Olympus Mons',mauna:'Mauna Kea (base to peak)',everest:'Mount Everest',valles:'Valles Marineris',grand:'Grand Canyon',btn:'فارسی',btnlabel:'Switch to Persian'},
-  fa:{earth:'زمین',mars:'مریخ',freeze:'انجماد آب',earthrec:'رکوردهای زمین',marsyears:'سال مریخی',thatis:function(n){return 'این معادل '+n+' سال زمینی است.'},earthdays:'روز زمینی',kg:'کیلوگرم',pick:'تاریخی در گذشته انتخاب کنید.',pause:'توقف',play:'پخش',km:'کیلومتر',olympus:'اولمپوس مونس',mauna:'ماونا کیا (از پایه تا قله)',everest:'قله‌ی اورست',valles:'دره‌های مارینر',grand:'گرند کانیون',btn:'EN',btnlabel:'Switch to English'}
+  en:{earth:'Earth',mars:'Mars',freeze:'water freezes',earthrec:'Earth records',marsyears:'Mars years',thatis:function(n){return 'That is '+n+' Earth years.'},earthdays:'Earth days',kg:'kg',pick:'Pick a date in the past.',pause:'Pause',play:'Play',km:'km',olympus:'Olympus Mons',mauna:'Mauna Kea (base to peak)',everest:'Mount Everest',valles:'Valles Marineris',grand:'Grand Canyon',btn:'فارسی',btnlabel:'Switch to Persian',snd0:'Sound off',snd1:'Sound on',sndl:'Turn sound on',sndl1:'Turn sound off'},
+  fa:{earth:'زمین',mars:'مریخ',freeze:'انجماد آب',earthrec:'رکوردهای زمین',marsyears:'سال مریخی',thatis:function(n){return 'این معادل '+n+' سال زمینی است.'},earthdays:'روز زمینی',kg:'کیلوگرم',pick:'تاریخی در گذشته انتخاب کنید.',pause:'توقف',play:'پخش',km:'کیلومتر',olympus:'اولمپوس مونس',mauna:'ماونا کیا (از پایه تا قله)',everest:'قله‌ی اورست',valles:'دره‌های مارینر',grand:'گرند کانیون',btn:'EN',btnlabel:'Switch to English',snd0:'صدا خاموش',snd1:'صدا روشن',sndl:'روشن کردن صدا',sndl1:'خاموش کردن صدا'}
 };
 function D(k,a){var v=DT[LANG][k];return typeof v==='function'?v(a):v}
 var NFc={};
@@ -528,14 +569,112 @@ var rustC=tok('--rust'),iceC=tok('--ice');
   requestAnimationFrame(tick);
 })();
 
+
+/* ---------- ambient sound: synthesized here, starts only after a click ---------- */
+(function(){
+  var btn=$('#snd'),lab=$('#sndl'),AC=window.AudioContext||window.webkitAudioContext;
+  if(!AC){btn.hidden=true;return}
+  var ctx=null,master,wind,pad,on=false,explore=false,timer=0,lastTick=0;
+  function label(){lab.textContent=D(on?'snd1':'snd0');btn.setAttribute('aria-label',D(on?'sndl1':'sndl'));btn.setAttribute('aria-pressed',on?'true':'false');btn.classList.toggle('on',on)}
+  onLang.push(label);
+  function brown(){
+    var L=ctx.sampleRate*6|0,F=ctx.sampleRate*.5|0,raw=new Float32Array(L+F),last=0,i;
+    for(i=0;i<raw.length;i++){last=(last+.02*(Math.random()*2-1))/1.02;raw[i]=last*3.2}
+    var buf=ctx.createBuffer(1,L,ctx.sampleRate),o=buf.getChannelData(0);
+    for(i=0;i<L;i++){o[i]=i<F?raw[i]*(i/F)+raw[L+i]*(1-i/F):raw[i]}
+    return buf;
+  }
+  function lfo(freq,depth,param){var o=ctx.createOscillator(),g=ctx.createGain();o.frequency.value=freq;g.gain.value=depth;o.connect(g);g.connect(param);o.start()}
+  function build(){
+    ctx=new AC();
+    master=ctx.createGain();master.gain.value=0;master.connect(ctx.destination);
+    var buf=brown();
+    // wind: filtered noise whose cutoff and strength drift slowly
+    var src=ctx.createBufferSource();src.buffer=buf;src.loop=true;
+    var hp=ctx.createBiquadFilter();hp.type='highpass';hp.frequency.value=70;
+    var lp=ctx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=520;lp.Q.value=.6;
+    var gust=ctx.createGain();gust.gain.value=.7;
+    wind=ctx.createGain();wind.gain.value=0;
+    src.connect(hp);hp.connect(lp);lp.connect(gust);gust.connect(wind);wind.connect(master);
+    lfo(.06,260,lp.frequency);lfo(.09,.3,gust.gain);
+    // thin whistle riding on the gusts
+    var s2=ctx.createBufferSource();s2.buffer=buf;s2.loop=true;
+    var bp=ctx.createBiquadFilter();bp.type='bandpass';bp.frequency.value=900;bp.Q.value=4;
+    var wg=ctx.createGain();wg.gain.value=.05;
+    s2.connect(bp);bp.connect(wg);wg.connect(wind);lfo(.05,320,bp.frequency);
+    src.start();s2.start(0,1.7);
+    // low pad with a long echo
+    pad=ctx.createGain();pad.gain.value=0;
+    var plp=ctx.createBiquadFilter();plp.type='lowpass';plp.frequency.value=380;
+    [[55,'sine',0,.25],[82.41,'sine',3,.22],[110.4,'triangle',-4,.12],[164.8,'sine',5,.08]].forEach(function(p){
+      var o=ctx.createOscillator(),g=ctx.createGain();o.type=p[1];o.frequency.value=p[0];o.detune.value=p[2];g.gain.value=p[3];o.connect(g);g.connect(plp);o.start();
+    });
+    plp.connect(pad);pad.connect(master);lfo(.045,120,plp.frequency);
+    var dl=ctx.createDelay(1),fb=ctx.createGain(),dlp=ctx.createBiquadFilter();
+    dl.delayTime.value=.47;fb.gain.value=.38;dlp.type='lowpass';dlp.frequency.value=900;
+    pad.connect(dl);dl.connect(dlp);dlp.connect(fb);fb.connect(dl);dlp.connect(master);
+  }
+  function levels(){
+    if(!ctx)return;var t=ctx.currentTime,land=STATE.land;
+    wind.gain.setTargetAtTime(on?.55*land:0,t,1.2);
+    pad.gain.setTargetAtTime(on?(explore?.2:.1)*(1-.4*land):0,t,1.5);
+  }
+  function tick(f,v){
+    if(!on||!ctx)return;var n=performance.now();if(n-lastTick<90)return;lastTick=n;
+    var t=ctx.currentTime,o=ctx.createOscillator(),g=ctx.createGain();
+    o.type='sine';o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f*.6,t+.18);
+    g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v||.05,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+.22);
+    o.connect(g);g.connect(master);o.start(t);o.stop(t+.25);
+  }
+  btn.addEventListener('click',function(){
+    if(!on){
+      try{if(!ctx)build();if(ctx.resume)ctx.resume()}catch(e){return}
+      on=true;master.gain.setTargetAtTime(.5,ctx.currentTime,.6);levels();clearInterval(timer);timer=setInterval(levels,250);tick(520,.05);
+    }else{
+      on=false;levels();master.gain.setTargetAtTime(0,ctx.currentTime,.25);clearInterval(timer);
+      setTimeout(function(){if(!on&&ctx.suspend)ctx.suspend()},900);
+    }
+    label();
+  });
+  document.addEventListener('visibilitychange',function(){if(on&&ctx)document.hidden?ctx.suspend():ctx.resume()});
+  var ex=$('#explore');
+  if(ex&&window.IntersectionObserver)new IntersectionObserver(function(en){explore=en[0].isIntersecting;levels()},{threshold:.3}).observe(ex);
+  document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('button,nav a,.brand');if(b&&b!==btn)tick(660,.04)});
+  var lastStat=null;
+  document.addEventListener('pointerover',function(e){var st=e.target.closest&&e.target.closest('.stat');if(st&&st!==lastStat){lastStat=st;tick(880,.025)}else if(!st)lastStat=null},{passive:true});
+})();
+
+/* ---------- panels rise once when they come into view ---------- */
+(function(){
+  if(!window.IntersectionObserver||reduce)return;
+  var io=new IntersectionObserver(function(en){en.forEach(function(e){if(e.isIntersecting){e.target.classList.add('rv-in');io.unobserve(e.target)}})},{threshold:.1,rootMargin:'0px 0px -5% 0px'});
+  [].forEach.call(document.querySelectorAll('.sheet'),function(el){
+    if(el.getBoundingClientRect().top>innerHeight*.9){el.classList.add('rv');io.observe(el)}
+  });
+})();
+
+/* ---------- pointer ring in the interactive sections ---------- */
+(function(){
+  if(reduce||!window.matchMedia||!matchMedia('(hover:hover) and (pointer:fine)').matches)return;
+  var cur=$('#cur'),x=0,y=0,cx=0,cy=0,run=false;
+  [].forEach.call(document.querySelectorAll('#you,#year,#cold,#land'),function(e){e.setAttribute('data-cursor','')});
+  function loop(){cx+=(x-cx)*.22;cy+=(y-cy)*.22;cur.style.transform='translate3d('+cx.toFixed(1)+'px,'+cy.toFixed(1)+'px,0)';if(run)requestAnimationFrame(loop)}
+  document.addEventListener('pointermove',function(e){
+    x=e.clientX;y=e.clientY;var t=e.target,inside=t.closest&&t.closest('[data-cursor]');
+    cur.classList.toggle('on',!!inside);cur.classList.toggle('big',!!(inside&&t.closest('a,button,input,.stat,canvas')));
+    if(inside&&!run){run=true;cx=x;cy=y;requestAnimationFrame(loop)}else if(!inside)run=false;
+  },{passive:true});
+  document.documentElement.addEventListener('mouseleave',function(){cur.classList.remove('on');run=false});
+})();
+
 $('#lang').addEventListener('click',function(){setLang(LANG==='fa'?'en':'fa')});
 applyLang();
 
 /* ---------- 3D stage ---------- */
 var THREE=window.THREE;
 var canvas=$('#gl'),ground=$('#ground'),renderer;
-if(!THREE){document.documentElement.classList.add('no-gl');return}
-try{renderer=new THREE.WebGLRenderer({canvas:canvas,antialias:true})}catch(e){document.documentElement.classList.add('no-gl');return}
+if(!THREE){document.documentElement.classList.add('no-gl');STATE.land=1;return}
+try{renderer=new THREE.WebGLRenderer({canvas:canvas,antialias:true})}catch(e){document.documentElement.classList.add('no-gl');STATE.land=1;return}
 renderer.outputEncoding=THREE.sRGBEncoding;
 renderer.setPixelRatio(Math.min(devicePixelRatio||1,innerWidth<700?1.5:2));
 
@@ -560,7 +699,7 @@ function sprite(){
 var DN=innerWidth<700?200:360,dpos=new Float32Array(DN*3),dvel=new Float32Array(DN*3);
 for(var i=0;i<DN;i++){dpos[i*3]=(Math.random()-.5)*34;dpos[i*3+1]=(Math.random()-.5)*20;dpos[i*3+2]=-14+Math.random()*30;dvel[i*3]=(Math.random()-.5)*.12;dvel[i*3+1]=(Math.random()-.5)*.06;dvel[i*3+2]=(Math.random()-.5)*.08}
 var dGeo=new THREE.BufferGeometry();dGeo.setAttribute('position',new THREE.BufferAttribute(dpos,3));
-var dMat=new THREE.PointsMaterial({map:sprite(),size:.11,color:0xff8a5e,transparent:true,opacity:.65,depthWrite:false,blending:THREE.AdditiveBlending});
+var dMat=new THREE.PointsMaterial({map:sprite(),size:.11,color:0xff9a4a,transparent:true,opacity:.65,depthWrite:false,blending:THREE.AdditiveBlending});
 var dust=new THREE.Points(dGeo,dMat);dust.frustumCulled=false;scene.add(dust);
 
 // planet: a real photograph projected onto both halves of the sphere
@@ -615,7 +754,7 @@ function frame(){
   smooth+=(scrollY-smooth)*(reduce?1:1-Math.exp(-dt*5));
   mx+=(tx-mx)*.05;my+=(ty-my)*.05;
   var S=clamp(smooth/span,0,1),extra=Math.max(0,smooth-span);
-  var split=ss(.13,.46,S),fly=ss(.42,.86,S),land=ss(.72,1,S),sky=ss(.55,.92,S);
+  var split=ss(.13,.46,S),fly=ss(.42,.86,S),land=ss(.72,1,S),sky=ss(.55,.92,S);STATE.land=land;
   left.position.x=-split*3.6;right.position.x=split*3.6;
   left.rotation.z=split*.16;right.rotation.z=-split*.16;
   left.rotation.y=right.rotation.y=mx*.12;left.rotation.x=right.rotation.x=my*.08;
@@ -647,7 +786,7 @@ function frame(){
   var g=ground.style;
   if(land>.001){
     var sc=lerp(1.45,1.07,land)+clamp(extra*.00012,0,.12);
-    g.visibility='visible';g.opacity=land.toFixed(3);
+    g.visibility='visible';g.opacity=land.toFixed(3);g.setProperty('--dim',(land*.2+clamp(extra/(innerHeight*3.5),0,.3)).toFixed(3));
     g.transform='translate3d('+(-mx*16).toFixed(1)+'px,'+(-my*10).toFixed(1)+'px,0) scale('+sc.toFixed(4)+')';
   }else if(g.visibility!=='hidden'){g.visibility='hidden';g.opacity='0'}
 
