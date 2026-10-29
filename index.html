@@ -868,10 +868,11 @@ var REGS={
           ['Its layered walls record a long geological history.','دیواره‌های لایه‌لایه‌اش تاریخ زمین‌شناختی طولانی را ثبت کرده‌اند.']],
    cap:['Valles Marineris, composite view. Check the source.','دره‌ی مارینر، نمای ترکیبی. منبع را بررسی کنید.'],
    mis:['Imaged in detail by Mars Express (ESA) and Mars Reconnaissance Orbiter (NASA). No lander has operated here.','با جزئیات بالا توسط Mars Express (ESA) و Mars Reconnaissance Orbiter (ناسا) تصویربرداری شده. هیچ فرودگری اینجا کار نکرده.']},
- olympus:{lat:18.6,lon:-133.8,real:false,
+ olympus:{lat:18.6,lon:-133.8,real:true,fx:50,fy:46,img:'img/gallery/olympus.jpg',
    name:['Olympus Mons','اولمپوس مونس'],
    facts:[['The tallest known volcano in the Solar System, about 22 km above the surrounding plain.','بلندترین آتشفشان شناخته‌شده در منظومه‌ی شمسی، حدود ۲۲ کیلومتر بالاتر از دشت اطرافش.'],
           ['Its base is about 600 km wide, with a gentle shield shape.','پایه‌اش حدود ۶۰۰ کیلومتر عرض دارد و شکلی سپری و ملایم دارد.']],
+   cap:['Orbital view of Olympus Mons and its summit caldera. Check the exact source.','نمای مداری از اولمپوس مونس و دهانه‌ی قله‌اش. منبع دقیق را بررسی کنید.'],
    mis:['Observed from orbit by several spacecraft. No lander has been here.','چند مدارگرد از مدار رصدش کرده‌اند. هیچ فرودگری اینجا نبوده.']},
  gale:{lat:-5.4,lon:137.8,real:true,fx:50,fy:50,img:'img/gallery/gale-selfie.jpg',
    name:['Gale crater','دهانه‌ی گیل'],
@@ -1016,6 +1017,7 @@ function renderTele(){
   $('#simnote').textContent=TXT('simNote');
 }
 var GAL=[
+ {s:'img/gallery/olympus.jpg',k:'real',t:['Olympus Mons, orbital view','اولمپوس مونس، نمای مداری']},
  {s:'img/gallery/valley-orbit.jpg',k:'real',t:['Orbital close-up of a valley floor. Location to confirm.','نمای نزدیک مداری از کف یک دره. مکان باید تأیید شود.']},
  {s:'img/gallery/valles.jpg',k:'real',t:['Valles Marineris, composite view','دره‌ی مارینر، نمای ترکیبی']},
  {s:'img/gallery/gale-selfie.jpg',k:'real',t:['Curiosity self-portrait','خودعکس کیوریاسیتی']},
