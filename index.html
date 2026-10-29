@@ -888,15 +888,17 @@ var REGS={
           ['Perseverance is collecting rock samples for a future return to Earth.','پرسویرنس نمونه‌های سنگی جمع می‌کند تا روزی به زمین برگردند.']],
    cap:['Rover ground view of rocky terrain from the Perseverance mission. Check the exact site.','نمای زمین سنگی از ماموریت پرسویرنس. مکان دقیق را بررسی کنید.'],
    mis:['Perseverance landed in 2021 and the Ingenuity helicopter flew here.','پرسویرنس در ۲۰۲۱ فرود آمد و هلیکوپتر اینجنیوتی اینجا پرواز کرد.']},
- hellas:{lat:-42.4,lon:70.5,real:false,
+ hellas:{lat:-42.4,lon:70.5,real:true,fx:50,fy:50,img:'img/gallery/hellas.jpg',
    name:['Hellas Basin','حوضه‌ی هلاس'],
    facts:[['One of the largest known impact basins, about 2,300 km across.','یکی از بزرگ‌ترین حوضه‌های برخوردی شناخته‌شده، حدود ۲٬۳۰۰ کیلومتر عرض.'],
           ['Its floor is among the lowest places on Mars, so air pressure there is higher than average.','کف آن از پایین‌ترین نقاط مریخ است و فشار هوا در آن از میانگین بیشتر است.']],
+   cap:['Orbital view of the Hellas Basin region. Check the exact source.','نمای مداری از ناحیه‌ی حوضه‌ی هلاس. منبع دقیق را بررسی کنید.'],
    mis:['Observed from orbit. No lander has been here.','از مدار رصد شده. هیچ فرودگری اینجا نبوده.']},
- north:{lat:85,lon:0,real:false,
+ north:{lat:85,lon:0,real:true,fx:50,fy:50,img:'img/gallery/north-polar.jpg',
    name:['North polar region','ناحیه‌ی قطب شمال'],
    facts:[['Layered deposits of water ice and seasonally frozen carbon dioxide.','لایه‌های یخ آب و دی‌اکسید کربن که فصلی یخ می‌زند.'],
           ['Seasonal changes of the cap are tracked from orbit.','تغییرات فصلی کلاهک یخی را از مدار دنبال می‌کنند.']],
+   cap:['Orbital view of the north polar ice cap, with its spiral troughs.','نمای مداری از کلاهک یخی قطب شمال با شیارهای مارپیچی‌اش.'],
    mis:['Watched by orbiters. There is no lander at the pole.','مدارگردها زیر نظرش دارند. در قطب فرودگری نیست.']}
 };
 var selReg=null;
@@ -1018,6 +1020,8 @@ function renderTele(){
 }
 var GAL=[
  {s:'img/gallery/olympus.jpg',k:'real',t:['Olympus Mons, orbital view','اولمپوس مونس، نمای مداری']},
+ {s:'img/gallery/north-polar.jpg',k:'real',t:['North polar ice cap, orbital view','کلاهک یخی قطب شمال، نمای مداری']},
+ {s:'img/gallery/hellas.jpg',k:'real',t:['Hellas Basin, orbital view','حوضه‌ی هلاس، نمای مداری']},
  {s:'img/gallery/valley-orbit.jpg',k:'real',t:['Orbital close-up of a valley floor. Location to confirm.','نمای نزدیک مداری از کف یک دره. مکان باید تأیید شود.']},
  {s:'img/gallery/valles.jpg',k:'real',t:['Valles Marineris, composite view','دره‌ی مارینر، نمای ترکیبی']},
  {s:'img/gallery/gale-selfie.jpg',k:'real',t:['Curiosity self-portrait','خودعکس کیوریاسیتی']},
