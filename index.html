@@ -69,7 +69,7 @@ h2{font:600 var(--fs-h2)/1.12 var(--head);letter-spacing:-.012em;margin:0;text-w
 /* content */
 .content{position:relative;z-index:2;padding-bottom:max(40px,env(safe-area-inset-bottom,0px))}
 .stack{display:flex;flex-direction:column;gap:clamp(40px,12vh,130px)}
-.sheet{background:var(--panel);-webkit-backdrop-filter:blur(18px) saturate(1.25);backdrop-filter:blur(18px) saturate(1.25);border:1px solid var(--line);border-radius:8px;padding:clamp(20px,4.5vw,48px);box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 28px 60px -36px rgba(0,0,0,.85)}
+.sheet{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:clamp(20px,4.5vw,48px);box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 28px 60px -36px rgba(0,0,0,.85)}
 .sheet{position:relative}
 .sheet::before{content:"";position:absolute;left:-1px;right:-1px;top:-1px;height:1px;background:linear-gradient(90deg,var(--rust),rgba(229,67,43,0) 55%)}
 .sheet h2{text-shadow:none;margin-bottom:12px}
@@ -218,6 +218,83 @@ html[dir=rtl] .rv .bar i{transform-origin:right center}
 #cur{position:fixed;left:0;top:0;width:32px;height:32px;margin:-16px 0 0 -16px;border:1px solid rgba(255,154,74,.85);border-radius:50%;pointer-events:none;z-index:50;opacity:0;transition:opacity .25s,width .2s,height .2s,margin .2s,background .2s}
 #cur.on{opacity:1}
 #cur.big{width:52px;height:52px;margin:-26px 0 0 -26px;background:rgba(255,154,74,.08)}
+/* explorer */
+.xgrid{display:grid;grid-template-columns:1.2fr 1fr;gap:clamp(20px,4vw,40px);align-items:start}
+@media(max-width:820px){.xgrid{grid-template-columns:1fr}}
+.mapbox{position:relative;width:100%;aspect-ratio:2/1;background-color:#0b0f19;background-image:linear-gradient(to right,rgba(190,215,255,.08) 1px,transparent 1px),linear-gradient(to bottom,rgba(190,215,255,.08) 1px,transparent 1px);background-size:calc(100%/12) calc(100%/6);border:1px solid var(--line);border-radius:6px;overflow:visible}
+.pin{position:absolute;transform:translate(-50%,-50%);width:18px;height:18px;border-radius:50%;background:var(--rust);border:2px solid rgba(255,255,255,.7);box-shadow:0 0 0 5px rgba(229,67,43,.18);cursor:pointer;padding:0;z-index:1}
+.pin[aria-pressed=true]{background:var(--ice);box-shadow:0 0 0 7px rgba(111,211,255,.2)}
+.pin:focus-visible{outline:2px solid var(--ice);outline-offset:4px}
+.pin span{position:absolute;left:22px;top:50%;transform:translateY(-50%);white-space:nowrap;font:500 .74rem/1 var(--mono);color:var(--fg);background:rgba(5,8,16,.88);padding:6px 8px;border-radius:3px;opacity:0;pointer-events:none;transition:opacity .2s}
+.pin:hover span,.pin[aria-pressed=true] span{opacity:1}
+.pin.flip span{left:auto;right:22px}
+.rp{border:1px solid var(--line);border-radius:6px;padding:20px;background:var(--field);min-height:300px}
+.rp .rph{font:600 1.35rem/1.2 var(--head);margin:8px 0 12px;text-transform:none;letter-spacing:0;color:var(--fg)}
+.coords{font:400 .78rem var(--mono);color:var(--dust);letter-spacing:.06em}
+.facts{margin:0 0 16px;padding-inline-start:18px;color:var(--text2)}
+.facts li{margin:6px 0}
+.imgwrap{overflow:hidden;border-radius:4px;aspect-ratio:3/2;background:#000}
+.imgwrap img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .9s cubic-bezier(.2,.7,.2,1)}
+.rrow{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:12px 0 4px}
+.rrow button{font:500 .74rem/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--fg);background:transparent;border:1px solid var(--line);border-radius:4px;padding:10px 14px;cursor:pointer}
+.rrow button:hover{border-color:var(--dust);color:var(--dust)}
+.ph{aspect-ratio:3/2;display:grid;place-items:center;border:1px dashed var(--line);color:var(--muted);text-align:center;padding:18px;font:400 .86rem/1.6 var(--body);border-radius:4px}
+.mis{margin:16px 0 0;color:var(--text2)}
+.tag{display:inline-block;font:500 .66rem/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;padding:6px 8px;border-radius:3px;border:1px solid;white-space:nowrap}
+.tag.real{color:var(--ice);border-color:rgba(111,211,255,.5)}
+.tag.sim{color:var(--rust);border-color:rgba(229,67,43,.65)}
+.tag.art{color:var(--muted);border-color:var(--line)}
+.tagrow{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0 4px}
+
+/* simulator */
+.simwrap{display:grid;grid-template-columns:1.3fr 1fr;gap:clamp(20px,4vw,40px);align-items:start}
+@media(max-width:820px){.simwrap{grid-template-columns:1fr}}
+.simstage{position:relative;overflow:hidden;border-radius:6px;aspect-ratio:16/10;background:#000}
+.simstage img{width:100%;height:100%;object-fit:cover;display:block;transition:filter .5s}
+.sdust,.slight{position:absolute;inset:0;pointer-events:none;transition:background .6s}
+.simctl input[type=range]{width:100%;accent-color:#ff9a4a;margin:10px 0 0}
+.simctl label{display:block;font:400 .74rem/1.4 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.simctl .chips{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}
+.simctl .chips button{font:500 .74rem/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--fg);background:transparent;border:1px solid var(--line);border-radius:30px;padding:10px 14px;cursor:pointer}
+.simctl .chips button.on{border-color:var(--dust);color:var(--dust)}
+
+/* mission control */
+.mgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-top:14px}
+.mcard{border:1px solid var(--line);border-radius:6px;padding:18px;background:var(--field)}
+.mcard h4{font:600 1.1rem/1.25 var(--head);margin:10px 0 6px}
+.mcard p{margin:6px 0;font-size:.92rem;color:var(--text2)}
+.subh{font:500 .76rem/1.4 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--dust);margin:34px 0 10px}
+svg.ch{width:100%;height:auto;display:block}
+svg.ch text{font:400 11px var(--mono);fill:var(--muted)}
+svg.ch rect{fill:var(--ice);opacity:.85}
+svg.ch .tl{fill:none;stroke:var(--rust);stroke-width:2.2;stroke-linejoin:round}
+.tele-h{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+.tele-h select{font:400 .9rem var(--body);color:var(--fg);background:var(--field);border:1px solid var(--line);border-radius:4px;padding:8px 10px}
+.ggrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.ggrid figure{margin:0}
+.ggrid img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:4px;display:block;background:#000}
+.ggrid figcaption{font:400 .76rem/1.5 var(--mono);color:var(--muted);margin-top:8px}
+.ggrid figcaption .tag{margin-inline-end:6px;vertical-align:middle}
+
+/* mars ai */
+.aigrid{display:grid;grid-template-columns:1fr 1.5fr;gap:clamp(20px,4vw,40px);align-items:start}
+@media(max-width:820px){.aigrid{grid-template-columns:1fr}}
+.aigrid select{width:100%;font:400 1rem var(--body);color:var(--fg);background:var(--field);border:1px solid var(--line);border-radius:4px;padding:12px 14px;margin-top:8px}
+.aigrid .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.aigrid .chips button{font:500 .74rem/1 var(--mono);letter-spacing:.08em;color:var(--fg);background:transparent;border:1px solid var(--line);border-radius:30px;padding:10px 14px;cursor:pointer}
+.aigrid .chips button.on{border-color:var(--dust);color:var(--dust)}
+.aiout{border:1px solid var(--line);border-radius:6px;padding:20px;background:var(--field);min-height:260px;color:var(--text2)}
+.aiout p{margin:0 0 12px}
+.aiout .src{font:400 .78rem/1.6 var(--mono);color:var(--muted);margin-top:16px}
+.aiout .unc{border-inline-start:2px solid var(--rust);padding-inline-start:12px;margin-top:14px;color:var(--text2)}
+
+/* take-control hint */
+.ctlh{position:fixed;left:50%;bottom:22px;transform:translate(-50%,8px);opacity:0;transition:opacity .5s,transform .5s;font:500 .78rem/1 var(--mono);letter-spacing:.08em;background:rgba(5,8,16,.85);border:1px solid var(--line);color:var(--fg);padding:11px 16px;border-radius:30px;pointer-events:none;z-index:25;white-space:nowrap}
+body.ctl .ctlh{opacity:1;transform:translate(-50%,0)}
+
+/* language-specific text */
+html[lang=fa] .en{display:none!important}
+html:not([lang=fa]) .fa{display:none!important}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.rv,.rv .stat,.rv .tl li{transition:none}}
 </style>
 </head>
@@ -229,7 +306,7 @@ html[dir=rtl] .rv .bar i{transform-origin:right center}
 
 <header class="nav"><div class="wrap">
   <a class="brand" href="#top">ARES DESCENT</a>
-  <nav aria-label="Sections" class="mainnav"><a href="#facts" data-i18n="k1">Facts</a><a href="#you" data-i18n="k2">Your age</a><a href="#air" data-i18n="k3">Air</a><a href="#live" data-i18n="k4">Life</a><a href="#maker" data-i18n="k5">Creator</a></nav>
+  <nav aria-label="Sections" class="mainnav"><a href="#facts" data-i18n="k1">Facts</a><a href="#you" data-i18n="k2">Your age</a><a href="#air" data-i18n="k3">Air</a><a href="#live" data-i18n="k4">Life</a><a href="#maker" data-i18n="k5">Creator</a><a href="#map"><span class="en">Explore</span><span class="fa">کاوش</span></a><a href="#control"><span class="en">Control</span><span class="fa">کنترل</span></a><a href="#ai"><span class="en">AI</span><span class="fa">هوش</span></a></nav>
   <div class="tools"><button class="snd" id="snd" type="button" aria-pressed="false" aria-label="Turn sound on"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path class="w" d="M16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span id="sndl">Sound off</span></button><button class="lang" id="lang" type="button" aria-label="Switch language">فارسی</button></div>
 </div></header>
 
@@ -397,7 +474,79 @@ html[dir=rtl] .rv .bar i{transform-origin:right center}
     </ol>
   </section>
 
-  <section class="sheet" id="maker">
+  <section class="sheet" id="map">
+  <h3><span class="en">Explorer</span><span class="fa">کاوش سیاره</span></h3>
+  <h2><span class="en">Pick a place on Mars.</span><span class="fa">یک نقطه از مریخ را انتخاب کن.</span></h2>
+  <p class="lead"><span class="en">Tap a pin to read about that region. Where a real photo exists, you can zoom into it.</span><span class="fa">روی یک سنجاق بزن تا درباره‌ی آن ناحیه بخوانی. اگر عکس واقعی آن ناحیه داشته باشیم، می‌توانی به آن نزدیک شوی.</span></p>
+  <div class="xgrid">
+    <div>
+      <div class="mapbox" id="mapbox"></div>
+      <p class="note"><span class="en">Grid lines every 30° of longitude and latitude. The map has no surface texture, so it only shows approximate positions.</span><span class="fa">خطوط شبکه هر ۳۰ درجه‌ی طول و عرض جغرافیایی هستند. این نقشه بافت سطح ندارد و فقط موقعیت تقریبی را نشان می‌دهد.</span></p>
+    </div>
+    <div class="rp" id="rp" aria-live="polite"></div>
+  </div>
+</section>
+
+<section class="sheet" id="sim">
+  <h3><span class="en">Environment simulator</span><span class="fa">شبیه‌ساز محیط</span></h3>
+  <h2><span class="en">Dust and light change the surface.</span><span class="fa">غبار و نور، سطح را عوض می‌کنند.</span></h2>
+  <p class="lead"><span class="en">Move the dust slider and pick a time of day. The photo of the surface changes to match.</span><span class="fa">کشوی غبار را تکان بده و یکی از ساعت‌های روز را انتخاب کن. عکس سطح با آن هماهنگ می‌شود.</span></p>
+  <div class="simwrap">
+    <div class="simstage">
+      <img id="simimg" src="img/gallery/surface-rocks.jpg" alt="Martian surface with scattered rocks" loading="lazy">
+      <div class="sdust" id="sdust"></div>
+      <div class="slight" id="slight"></div>
+    </div>
+    <div class="simctl">
+      <label for="dustR"><span class="en">Dust intensity</span><span class="fa">شدت غبار</span> · <b id="dustV">20</b>%</label>
+      <input id="dustR" type="range" min="0" max="100" value="20">
+      <div class="chips" id="times">
+        <button type="button" data-t="morning"><span class="en">Morning</span><span class="fa">صبح</span></button>
+        <button type="button" data-t="noon"><span class="en">Noon</span><span class="fa">ظهر</span></button>
+        <button type="button" data-t="sunset"><span class="en">Sunset</span><span class="fa">غروب</span></button>
+      </div>
+      <p class="lead" id="skyTxt" style="margin:0"></p>
+    </div>
+  </div>
+  <p class="note"><span class="en">Visual simulation only. It shows how the surface looks under different conditions, not measured physical values.</span><span class="fa">این فقط شبیه‌سازی تصویری است و نشان می‌دهد سطح در شرایط مختلف چه ظاهری دارد، نه مقادیر فیزیکی اندازه‌گیری‌شده.</span></p>
+</section>
+
+<section class="sheet" id="control">
+  <h3><span class="en">Mission Control</span><span class="fa">مرکز کنترل ماموریت</span></h3>
+  <h2><span class="en">Missions, data and images.</span><span class="fa">ماموریت‌ها، داده و تصویر.</span></h2>
+  <p class="lead"><span class="en">Real facts, real charts and simulated values are labelled differently, so you always know which is which.</span><span class="fa">حقایق واقعی، نمودارهای واقعی و مقادیر شبیه‌سازی‌شده با برچسب‌های متفاوت مشخص شده‌اند تا همیشه بدانی کدام است.</span></p>
+  <div class="tagrow">
+    <span class="tag real"><span class="en">Real</span><span class="fa">واقعی</span></span>
+    <span class="tag sim"><span class="en">Simulated</span><span class="fa">شبیه‌سازی</span></span>
+    <span class="tag art"><span class="en">Art render</span><span class="fa">رندر هنری</span></span>
+  </div>
+  <div class="mgrid" id="mgrid"></div>
+  <div class="subh" id="yh"></div>
+  <svg id="ychart" class="ch" viewBox="0 0 640 220" role="img"></svg>
+  <div class="subh tele-h"><span id="th"></span><select id="tm"></select></div>
+  <svg id="tele" class="ch" viewBox="0 0 640 200" role="img"></svg>
+  <p class="note" id="simnote"></p>
+  <div class="subh" id="ih"></div>
+  <div class="ggrid" id="ggrid"></div>
+</section>
+
+<section class="sheet" id="ai">
+  <h3><span class="en">Mars AI</span><span class="fa">هوش مصنوعی مریخ</span></h3>
+  <h2><span class="en">Ask about a place.</span><span class="fa">درباره‌ی یک ناحیه بپرس.</span></h2>
+  <p class="lead" id="aikb"></p>
+  <div class="aigrid">
+    <div>
+      <label for="aireg" class="note" style="display:block;margin:0"><span class="en">Region</span><span class="fa">ناحیه</span></label>
+      <select id="aireg"></select>
+      <div class="chips" id="aitop"></div>
+    </div>
+    <div class="aiout" id="aiout" aria-live="polite"></div>
+  </div>
+</section>
+
+<div class="ctlh" id="ctlh"><span class="en">Take control: drag to look around the surface</span><span class="fa">کنترل با توست: بکش و سطح را بگرد</span></div>
+
+<section class="sheet" id="maker">
     <h3 data-i18n="k5">Creator</h3>
     <div class="maker">
       <div class="name-big">Aidin Hamzeii</div>
@@ -667,6 +816,260 @@ var rustC=tok('--rust'),iceC=tok('--ice');
   document.documentElement.addEventListener('mouseleave',function(){cur.classList.remove('on');run=false});
 })();
 
+/* ---------- explorer, simulator, mission control, Mars AI (local data, no network) ---------- */
+var DRG={x:0,y:0},dragPt=null;
+document.addEventListener('pointerdown',function(e){
+  var t=e.target;
+  if(STATE.land>.92&&!(t.closest&&t.closest('button,input,select,a,label,.sheet,.ctlh')))dragPt={x:e.clientX,y:e.clientY};
+},{passive:true});
+document.addEventListener('pointermove',function(e){
+  if(!dragPt)return;
+  DRG.x=clamp(DRG.x+(e.clientX-dragPt.x),-160,160);DRG.y=clamp(DRG.y+(e.clientY-dragPt.y),-120,120);
+  dragPt={x:e.clientX,y:e.clientY};
+},{passive:true});
+document.addEventListener('pointerup',function(){dragPt=null});
+
+function T(v){return v?(LANG==='fa'?v[1]:v[0]):''}
+function N(s){return LANG==='fa'?faDigits(String(s)):String(s)}
+var TX={
+ rpIntro:['Tap a pin on the map to read about that region.','روی یک سنجاق روی نقشه بزن تا درباره‌ی آن ناحیه بخوانی.'],
+ approx:['Approximate position','موقعیت تقریبی'],
+ noimg:['There is no real photo of this region in my files yet. Send one and I will add it.','فعلاً عکس واقعی این ناحیه در فایل‌های من نیست. اگر بفرستی اضافه می‌کنم.'],
+ zin:['Zoom in','نزدیک‌تر'],zout:['Zoom out','دورتر'],
+ realTag:['Real image','عکس واقعی'],all:['All of Mars','کل مریخ'],
+ sources:['Sources','منابع'],uncert:['Uncertainty','عدم قطعیت'],
+ real:['Real','واقعی'],sim:['Simulated','شبیه‌سازی'],art:['Art render','رندر هنری'],
+ dustL:['Dust intensity','شدت غبار'],pick:['Metric','کمیت'],
+ p1:['Battery power','توان باتری'],p2:['Surface temperature','دمای سطح'],p3:['Dust opacity','کدورت غبار'],
+ simNote:['Simulated values, generated for display. They are not from a real spacecraft.','مقادیر شبیه‌سازی‌شده‌اند و برای نمایش ساخته شده‌اند. داده‌ی واقعی یک فضاپیما نیستند.'],
+ status:['Status','وضعیت'],last:['Last update','آخرین به‌روزرسانی'],
+ lastVal:['Not known to me. Check the official source.','برای من مشخص نیست. منبع رسمی را بررسی کنید.'],
+ yh:['Launch years of the missions listed (real data)','سال پرتاب ماموریت‌های این فهرست (داده‌ی واقعی)'],
+ th:['Telemetry','تله‌متری'],ih:['Images','تصاویر'],
+ kb:['Answers come from a fixed knowledge base, not from a live language model. When I do not know, I say so.','پاسخ‌ها از یک پایگاه دانش ثابت می‌آیند، نه از یک مدل زبانی زنده. اگر چیزی ندانم، همین را می‌گویم.'],
+ ai_geo:['Geology','زمین‌شناسی'],ai_mis:['Missions','ماموریت‌ها'],ai_wat:['Water','آب'],ai_life:['Life','حیات'],
+ sky_morning:['Morning: the sky is paler and less orange, and shadows are long.','صبح: آسمان کم‌رنگ‌تر و کم‌تر نارنجی است و سایه‌ها بلندترند.'],
+ sky_noon:['Noon: suspended dust gives the sky a butterscotch tint.','ظهر: غبار معلق به آسمان رنگ کهربایی می‌دهد.'],
+ sky_sunset:['Sunset: the sun looks smaller and the sky near it looks blue, the reverse of Earth.','غروب: خورشید کوچک‌تر به نظر می‌رسد و آسمان نزدیکش آبی می‌شود؛ برعکس زمین.']
+};
+function TXT(k){return T(TX[k])}
+
+var REGS={
+ vm:{lat:-14,lon:-59,real:true,fx:50,fy:50,img:'img/gallery/valles.jpg',
+   name:['Valles Marineris','دره‌های مارینر'],
+   facts:[['A canyon system about 4,000 km long and up to roughly 7 km deep.','سامانه‌ی دره‌ای به طول حدود ۴٬۰۰۰ کیلومتر و عمق حدود ۷ کیلومتر.'],
+          ['Its origin is still debated; crustal stretching and erosion are the leading explanations.','منشأ آن هنوز بحث‌برانگیز است؛ کشیدگی پوسته و فرسایش محتمل‌ترین توضیح‌ها هستند.'],
+          ['Its layered walls record a long geological history.','دیواره‌های لایه‌لایه‌اش تاریخ زمین‌شناختی طولانی را ثبت کرده‌اند.']],
+   cap:['Valles Marineris, composite view. Check the source.','دره‌ی مارینر، نمای ترکیبی. منبع را بررسی کنید.'],
+   mis:['Imaged in detail by Mars Express (ESA) and Mars Reconnaissance Orbiter (NASA). No lander has operated here.','با جزئیات بالا توسط Mars Express (ESA) و Mars Reconnaissance Orbiter (ناسا) تصویربرداری شده. هیچ فرودگری اینجا کار نکرده.']},
+ olympus:{lat:18.6,lon:-133.8,real:false,
+   name:['Olympus Mons','اولمپوس مونس'],
+   facts:[['The tallest known volcano in the Solar System, about 22 km above the surrounding plain.','بلندترین آتشفشان شناخته‌شده در منظومه‌ی شمسی، حدود ۲۲ کیلومتر بالاتر از دشت اطرافش.'],
+          ['Its base is about 600 km wide, with a gentle shield shape.','پایه‌اش حدود ۶۰۰ کیلومتر عرض دارد و شکلی سپری و ملایم دارد.']],
+   mis:['Observed from orbit by several spacecraft. No lander has been here.','چند مدارگرد از مدار رصدش کرده‌اند. هیچ فرودگری اینجا نبوده.']},
+ gale:{lat:-5.4,lon:137.8,real:true,fx:50,fy:50,img:'img/gallery/gale-selfie.jpg',
+   name:['Gale crater','دهانه‌ی گیل'],
+   facts:[['A 154 km impact crater with Mount Sharp (Aeolis Mons) rising from its center.','دهانه‌ی برخوردی به قطر ۱۵۴ کیلومتر که کوه شارپ (ایولیس مونس) از مرکزش بالا آمده.'],
+          ['Its layered rock records ancient lake environments.','سنگ‌های لایه‌لایه‌اش محیط دریاچه‌های باستانی را ثبت کرده‌اند.'],
+          ['Conditions here were once suitable for microbial life. That describes the environment, not confirmed life.','شرایط اینجا زمانی برای حیات میکروبی مناسب بوده. این درباره‌ی محیط است، نه حیات تأییدشده.']],
+   cap:['Curiosity self-portrait in the Gale crater area. Check the source.','خودعکس کیوریاسیتی در ناحیه‌ی دهانه‌ی گیل. منبع را بررسی کنید.'],
+   mis:['The Curiosity rover, landed in 2012, explores here.','مریخ‌نورد کیوریاسیتی که در ۲۰۱۲ فرود آمد، اینجا را بررسی می‌کند.']},
+ jezero:{lat:18.4,lon:77.6,real:true,fx:50,fy:50,img:'img/gallery/jezero-ground.jpg',
+   name:['Jezero crater','دهانه‌ی جزیرو'],
+   facts:[['About a 45 km crater with an ancient river delta that once fed a lake.','دهانه‌ای به قطر حدود ۴۵ کیلومتر با دلتای رودخانه‌ای باستانی که دریاچه را تغذیه می‌کرده.'],
+          ['Delta layers keep clues about past water. Whether they hold signs of life is still unknown.','لایه‌های دلتا سرنخ‌هایی از آب گذشته دارند. اینکه نشانه‌ای از حیات دارند یا نه هنوز معلوم نیست.'],
+          ['Perseverance is collecting rock samples for a future return to Earth.','پرسویرنس نمونه‌های سنگی جمع می‌کند تا روزی به زمین برگردند.']],
+   cap:['Rover ground view of rocky terrain from the Perseverance mission. Check the exact site.','نمای زمین سنگی از ماموریت پرسویرنس. مکان دقیق را بررسی کنید.'],
+   mis:['Perseverance landed in 2021 and the Ingenuity helicopter flew here.','پرسویرنس در ۲۰۲۱ فرود آمد و هلیکوپتر اینجنیوتی اینجا پرواز کرد.']},
+ hellas:{lat:-42.4,lon:70.5,real:false,
+   name:['Hellas Basin','حوضه‌ی هلاس'],
+   facts:[['One of the largest known impact basins, about 2,300 km across.','یکی از بزرگ‌ترین حوضه‌های برخوردی شناخته‌شده، حدود ۲٬۳۰۰ کیلومتر عرض.'],
+          ['Its floor is among the lowest places on Mars, so air pressure there is higher than average.','کف آن از پایین‌ترین نقاط مریخ است و فشار هوا در آن از میانگین بیشتر است.']],
+   mis:['Observed from orbit. No lander has been here.','از مدار رصد شده. هیچ فرودگری اینجا نبوده.']},
+ north:{lat:85,lon:0,real:false,
+   name:['North polar region','ناحیه‌ی قطب شمال'],
+   facts:[['Layered deposits of water ice and seasonally frozen carbon dioxide.','لایه‌های یخ آب و دی‌اکسید کربن که فصلی یخ می‌زند.'],
+          ['Seasonal changes of the cap are tracked from orbit.','تغییرات فصلی کلاهک یخی را از مدار دنبال می‌کنند.']],
+   mis:['Watched by orbiters. There is no lander at the pole.','مدارگردها زیر نظرش دارند. در قطب فرودگری نیست.']}
+};
+var selReg=null;
+
+function buildPins(){
+  var box=$('#mapbox');box.textContent='';
+  Object.keys(REGS).forEach(function(id){
+    var r=REGS[id],b=document.createElement('button');
+    b.type='button';b.className='pin'+(((r.lon+180)/360)>.6?' flip':'');b.setAttribute('data-id',id);
+    b.style.left=((r.lon+180)/360*100).toFixed(2)+'%';
+    b.style.top=((90-r.lat)/180*100).toFixed(2)+'%';
+    b.appendChild(document.createElement('span'));
+    b.addEventListener('click',function(){selReg=id;refreshPins();renderPanel();renderAI()});
+    box.appendChild(b);
+  });
+}
+function refreshPins(){
+  [].forEach.call($('#mapbox').children,function(b){
+    var id=b.getAttribute('data-id'),r=REGS[id],nm=T(r.name);
+    b.firstChild.textContent=nm;b.setAttribute('aria-label',nm);
+    b.setAttribute('aria-pressed',id===selReg?'true':'false');
+  });
+}
+function renderPanel(){
+  var p=$('#rp');
+  if(!selReg){p.innerHTML='<p class="lead">'+TXT('rpIntro')+'</p>';return}
+  var r=REGS[selReg];
+  var coord=(r.lat>=0?(LANG==='fa'?'شمال':'N'):(LANG==='fa'?'جنوب':'S'))+' '+N(Math.abs(r.lat).toFixed(1))+'°  '+(r.lon>=0?(LANG==='fa'?'شرق':'E'):(LANG==='fa'?'غرب':'W'))+' '+N(Math.abs(r.lon).toFixed(1))+'°';
+  var h='<div class="coords">'+TXT('approx')+': '+coord+'</div><h3 class="rph">'+T(r.name)+'</h3><ul class="facts">';
+  r.facts.forEach(function(f){h+='<li>'+T(f)+'</li>'});
+  h+='</ul>';
+  if(r.real){
+    h+='<div class="imgwrap"><img id="rimg" src="'+r.img+'" alt="'+T(r.cap)+'" style="transform-origin:'+r.fx+'% '+r.fy+'%"></div>'+
+       '<div class="rrow"><button type="button" id="zbtn" aria-pressed="false">'+TXT('zin')+'</button><span class="tag real">'+TXT('realTag')+'</span></div>'+
+       '<p class="note">'+T(r.cap)+'</p>';
+  }else{
+    h+='<div class="ph">'+TXT('noimg')+'</div>';
+  }
+  h+='<p class="mis">'+T(r.mis)+'</p>';
+  p.innerHTML=h;
+  var z=$('#zbtn');
+  if(z)z.addEventListener('click',function(){
+    var im=$('#rimg'),on=im.getAttribute('data-z')!=='1';
+    im.setAttribute('data-z',on?'1':'0');im.style.transform=on?'scale(2.4)':'scale(1)';
+    z.textContent=TXT(on?'zout':'zin');z.setAttribute('aria-pressed',on?'true':'false');
+  });
+}
+
+/* simulator */
+var timeSel='noon';
+var LIGHT={morning:'linear-gradient(to top,rgba(255,190,120,.3),rgba(255,190,120,0) 65%)',noon:'none',sunset:'linear-gradient(to top,rgba(255,90,40,.45),rgba(255,90,40,0) 55%),linear-gradient(to bottom,rgba(40,70,140,.38),rgba(40,70,140,0) 60%)'};
+function renderSim(){
+  var d=+$('#dustR').value/100;
+  $('#dustV').textContent=N(Math.round(d*100));
+  $('#simimg').style.filter='brightness('+(1-d*.32).toFixed(2)+') contrast('+(1-d*.12).toFixed(2)+') saturate('+(1-d*.25).toFixed(2)+')';
+  $('#sdust').style.background='rgba(206,104,52,'+(d*.55).toFixed(2)+')';
+  $('#slight').style.background=LIGHT[timeSel];
+  [].forEach.call(document.querySelectorAll('#times button'),function(b){b.classList.toggle('on',b.getAttribute('data-t')===timeSel)});
+  $('#skyTxt').textContent=TXT('sky_'+timeSel);
+}
+
+/* mission control */
+var MIS=[
+ {n:'Perseverance',ag:'NASA',k:['Rover','مریخ‌نورد'],y:2020,ev:['Launched 2020, landed in Jezero crater in February 2021.','پرتاب ۲۰۲۰، فرود در دهانه‌ی جزیرو در فوریه‌ی ۲۰۲۱.'],st:['Active, as of my last information.','فعال، طبق آخرین اطلاعات من.']},
+ {n:'Curiosity',ag:'NASA',k:['Rover','مریخ‌نورد'],y:2011,ev:['Launched 2011, landed in Gale crater in August 2012.','پرتاب ۲۰۱۱، فرود در دهانه‌ی گیل در اوت ۲۰۱۲.'],st:['Active, as of my last information.','فعال، طبق آخرین اطلاعات من.']},
+ {n:'Ingenuity',ag:'NASA',k:['Helicopter','هلیکوپتر'],y:2020,ev:['First powered flight on another planet, April 2021.','اولین پرواز قدرتی روی سیاره‌ای دیگر، آوریل ۲۰۲۱.'],st:['Mission ended in January 2024.','ماموریت در ژانویه‌ی ۲۰۲۴ پایان یافت.']},
+ {n:'Zhurong',ag:'CNSA',k:['Rover','مریخ‌نورد'],y:2020,ev:['Part of Tianwen-1. Landed in Utopia Planitia in May 2021.','بخشی از تیانوون-۱. فرود در اوتوپیا در مه‌ی ۲۰۲۱.'],st:['Unclear. Last reports describe hibernation from 2022.','نامشخص. آخرین گزارش‌ها از ۲۰۲۲ خواب زمستانی را توصیف می‌کنند.']},
+ {n:'MAVEN',ag:'NASA',k:['Orbiter','مدارگرد'],y:2013,ev:['Launched 2013, reached Mars orbit in September 2014.','پرتاب ۲۰۱۳، ورود به مدار مریخ در سپتامبر ۲۰۱۴.'],st:['Check the current status with NASA.','وضعیت فعلی را از ناسا بررسی کنید.']},
+ {n:'Mars Express',ag:'ESA',k:['Orbiter','مدارگرد'],y:2003,ev:['Launched 2003, reached Mars in December 2003.','پرتاب ۲۰۰۳، ورود به مریخ در دسامبر ۲۰۰۳.'],st:['Check the current status with ESA.','وضعیت فعلی را از ESA بررسی کنید.']},
+ {n:'InSight',ag:'NASA',k:['Lander','فرودگر'],y:2018,ev:['Landed in Elysium Planitia in November 2018.','فرود در الیزیوم در نوامبر ۲۰۱۸.'],st:['Mission ended in December 2022.','ماموریت در دسامبر ۲۰۲۲ پایان یافت.']},
+ {n:'Tianwen-1',ag:'CNSA',k:['Orbiter + lander + rover','مدارگرد + فرودگر + مریخ‌نورد'],y:2020,ev:['Launched July 2020, reached Mars in February 2021.','پرتاب ژوئیه‌ی ۲۰۲۰، ورود به مریخ در فوریه‌ی ۲۰۲۱.'],st:['Check the current status with CNSA.','وضعیت فعلی را از CNSA بررسی کنید.']}
+];
+function renderMissions(){
+  $('#mgrid').innerHTML=MIS.map(function(m){
+    return '<div class="mcard"><span class="tag real">'+TXT('real')+'</span><h4>'+m.n+' · '+m.ag+'</h4>'+
+      '<p>'+T(m.k)+'</p><p>'+T(m.ev)+'</p><p><b>'+TXT('status')+':</b> '+T(m.st)+'</p>'+
+      '<p class="note">'+TXT('last')+': '+TXT('lastVal')+'</p></div>';
+  }).join('');
+}
+function renderYears(){
+  var counts={};MIS.forEach(function(m){counts[m.y]=(counts[m.y]||0)+1});
+  var ys=Object.keys(counts).sort(),max=Math.max.apply(null,ys.map(function(y){return counts[y]}));
+  var W=640,H=220,L=40,B=40,TOP=24,bw=(W-L-20)/ys.length,s='';
+  ys.forEach(function(y,i){
+    var h=(counts[y]/max)*(H-B-TOP),x=L+i*bw+bw*.18,yy=H-B-h;
+    s+='<rect x="'+x.toFixed(1)+'" y="'+yy.toFixed(1)+'" width="'+(bw*.64).toFixed(1)+'" height="'+h.toFixed(1)+'" rx="2"/>';
+    s+='<text x="'+(x+bw*.32).toFixed(1)+'" y="'+(yy-6).toFixed(1)+'" text-anchor="middle">'+N(counts[y])+'</text>';
+    s+='<text x="'+(x+bw*.32).toFixed(1)+'" y="'+(H-B+16)+'" text-anchor="middle">'+N(y)+'</text>';
+  });
+  s+='<line x1="'+L+'" x2="'+(W-20)+'" y1="'+(H-B)+'" y2="'+(H-B)+'" stroke="rgba(255,255,255,.15)"/>';
+  $('#ychart').innerHTML=s;
+  $('#yh').textContent=TXT('yh');
+}
+function series(kind){
+  var a=[],s=7;
+  for(var i=0;i<60;i++){
+    s=(s*16807)%2147483647;var n=s/2147483647-.5,v;
+    if(kind==='p1')v=72+10*Math.sin(i/7)+n*4;
+    else if(kind==='p2')v=-55+14*Math.sin(i/9)+n*3;
+    else v=40+25*Math.sin(i/11)+n*6;
+    a.push(v);
+  }
+  return a;
+}
+function renderTele(){
+  var sel=$('#tm');
+  if(!sel.options.length||sel.getAttribute('data-l')!==LANG){
+    var keep=sel.value||'p1';
+    sel.innerHTML=['p1','p2','p3'].map(function(k){return '<option value="'+k+'">'+TXT(k)+'</option>'}).join('');
+    sel.value=keep;sel.setAttribute('data-l',LANG);
+  }
+  var vals=series(sel.value),W=640,H=200,L=40,R=20,TOP=20,B=30;
+  var mn=Math.min.apply(null,vals),mx=Math.max.apply(null,vals),span=(mx-mn)||1;
+  var pts=vals.map(function(v,i){return (L+i*(W-L-R)/(vals.length-1)).toFixed(1)+','+(TOP+(1-(v-mn)/span)*(H-TOP-B)).toFixed(1)}).join(' ');
+  $('#tele').innerHTML='<polyline class="tl" points="'+pts+'"/><text x="6" y="'+(TOP+10)+'">'+N(mx.toFixed(0))+'</text><text x="6" y="'+(H-B)+'">'+N(mn.toFixed(0))+'</text>';
+  $('#th').innerHTML='<span class="tag sim">'+TXT('sim')+'</span> '+TXT('th');
+  $('#simnote').textContent=TXT('simNote');
+}
+var GAL=[
+ {s:'img/gallery/valles.jpg',k:'real',t:['Valles Marineris, composite view','دره‌ی مارینر، نمای ترکیبی']},
+ {s:'img/gallery/gale-selfie.jpg',k:'real',t:['Curiosity self-portrait','خودعکس کیوریاسیتی']},
+ {s:'img/gallery/jezero-ground.jpg',k:'real',t:['Perseverance ground view','نمای زمین از پرسویرنس']},
+ {s:'img/gallery/surface-rocks.jpg',k:'real',t:['Mars surface with rocks','سطح مریخ با سنگ‌ها']},
+ {s:'img/gallery/earth-mars.jpg',k:'real',t:['Earth and Mars size comparison','مقایسه‌ی اندازه‌ی زمین و مریخ']},
+ {s:'img/gallery/analog.jpg',k:'sim',t:['Astronauts in a desert analog on Earth, not on Mars','فضانوردان در شبیه‌سازی بیابانی روی زمین، نه روی مریخ']},
+ {s:'img/gallery/art-station.jpg',k:'art',t:['Station concept render','رندر مفهومی ایستگاه']},
+ {s:'img/gallery/art-rover.jpg',k:'art',t:['Rover concept render','رندر مفهومی مریخ‌نورد']},
+ {s:'img/gallery/art-crater.jpg',k:'art',t:['Crater concept render','رندر مفهومی دهانه']},
+ {s:'img/gallery/art-limb.jpg',k:'art',t:['Horizon concept render','رندر مفهومی افق']}
+];
+function renderGallery(){
+  $('#ih').textContent=TXT('ih');
+  $('#ggrid').innerHTML=GAL.map(function(g){
+    var tg=g.k==='real'?TXT('real'):g.k==='sim'?TXT('sim'):TXT('art');
+    return '<figure><img src="'+g.s+'" alt="'+T(g.t)+'" loading="lazy"><figcaption><span class="tag '+g.k+'">'+tg+'</span> '+T(g.t)+'</figcaption></figure>';
+  }).join('');
+}
+
+/* Mars AI: fixed knowledge base, answers include sources and uncertainty */
+var TOPICS=['geo','mis','wat','life'],topSel='geo';
+var GEN={
+ geo:{a:['Mars has volcanoes, deep canyons, impact craters and sedimentary layers. Most of the surface is basaltic rock covered in iron-oxide dust.','مریخ آتشفشان، دره‌ی عمیق، دهانه‌ی برخورد و لایه‌های رسوبی دارد. بیشتر سطحش سنگ بازالتی است که با غبار اکسید آهن پوشیده شده.'],
+      src:['NASA Science: Mars (science.nasa.gov/mars); ESA Mars Express','ناسا، بخش علمی مریخ (science.nasa.gov/mars)؛ ESA، Mars Express'],
+      u:['Surface ages and some structural details are still debated in several areas.','سن سطح و بعضی جزئیات ساختاری در چند منطقه هنوز بحث‌برانگیز است.']},
+ mis:{a:['Perseverance, Curiosity, Mars Express, MAVEN and Tianwen-1 are among the missions I know about. Their status may have changed after my last information.','Perseverance، Curiosity، Mars Express، MAVEN و Tianwen-1 از ماموریت‌هایی هستند که من درباره‌شان می‌دانم. وضعیتشان ممکن است بعد از آخرین اطلاعات من تغییر کرده باشد.'],
+      src:['NASA Mars Exploration (mars.nasa.gov); ESA','ناسا، Mars Exploration (mars.nasa.gov)؛ ESA'],
+      u:['Current status and recent results are not in my information. Check the official pages.','وضعیت کنونی و نتایج تازه در اطلاعات من نیست. صفحه‌های رسمی را بررسی کنید.']},
+ wat:{a:['Evidence shows liquid water existed in the past: river deltas, lake sediments and minerals that form in water. Today water is mostly ice at the poles and underground.','شواهد نشان می‌دهد آب مایع در گذشته وجود داشته: دلتای رودخانه، رسوب دریاچه و کانی‌هایی که در آب تشکیل می‌شوند. امروز آب بیشتر به‌صورت یخ در قطب‌ها و زیرزمین است.'],
+      src:['NASA Science: Mars water','ناسا، بخش علمی آب در مریخ'],
+      u:['How much water there was, and for how long, is still debated.','مقدار آب و مدت وجودش هنوز بحث دارد.']},
+ life:{a:['No confirmed evidence of life has been found. Organic molecules and methane signals have been detected, but their origin is still unclear.','هیچ شاهد تأییدشده‌ای از حیات پیدا نشده. مولکول‌های آلی و نشانه‌های متان دیده شده‌اند، ولی منشأ آن‌ها هنوز روشن نیست.'],
+      src:['NASA Science: Mars astrobiology','ناسا، بخش زیست‌شناسی فرازمینی مریخ'],
+      u:['Nothing is confirmed. Organic molecules and methane signals have more than one possible explanation.','چیزی تأیید نشده. مولکول‌های آلی و نشانه‌های متان بیش از یک توضیح ممکن دارند.']}
+};
+function renderAI(){
+  var sel=$('#aireg'),prev=sel.value;
+  sel.innerHTML='<option value="">'+TXT('all')+'</option>'+Object.keys(REGS).map(function(id){return '<option value="'+id+'">'+T(REGS[id].name)+'</option>'}).join('');
+  sel.value=prev||(selReg||'');
+  $('#aikb').textContent=TXT('kb');
+  $('#aitop').innerHTML=TOPICS.map(function(k){return '<button type="button" data-k="'+k+'" class="'+(k===topSel?'on':'')+'">'+TXT('ai_'+(k==='geo'?'geo':k==='mis'?'mis':k==='wat'?'wat':'life'))+'</button>'}).join('');
+  var reg=sel.value?REGS[sel.value]:null,g=GEN[topSel],out='<p>'+T(g.a)+'</p>';
+  if(reg&&topSel==='geo')out+='<ul class="facts">'+reg.facts.map(function(f){return '<li>'+T(f)+'</li>'}).join('')+'</ul>';
+  if(reg&&topSel==='mis')out+='<p>'+T(reg.mis)+'</p>';
+  out+='<div class="src"><b>'+TXT('sources')+':</b> '+T(g.src)+'</div><div class="unc"><b>'+TXT('uncert')+':</b> '+T(g.u)+'</div>';
+  $('#aiout').innerHTML=out;
+}
+
+function renderAll(){
+  refreshPins();renderPanel();renderSim();renderMissions();renderYears();renderTele();renderGallery();renderAI();
+  $('#ctlh').setAttribute('aria-hidden','false');
+}
+buildPins();
+$('#dustR').addEventListener('input',renderSim);
+$('#times').addEventListener('click',function(e){var b=e.target.closest('button');if(b){timeSel=b.getAttribute('data-t');renderSim()}});
+$('#tm').addEventListener('change',renderTele);
+$('#aireg').addEventListener('change',renderAI);
+$('#aitop').addEventListener('click',function(e){var b=e.target.closest('button');if(b){topSel=b.getAttribute('data-k');renderAI()}});
+onLang.push(renderAll);
+renderAll();
+
 $('#lang').addEventListener('click',function(){setLang(LANG==='fa'?'en':'fa')});
 applyLang();
 
@@ -696,7 +1099,7 @@ function sprite(){
   var gr=g.createRadialGradient(32,32,0,32,32,32);gr.addColorStop(0,'rgba(255,255,255,1)');gr.addColorStop(.35,'rgba(255,255,255,.45)');gr.addColorStop(1,'rgba(255,255,255,0)');
   g.fillStyle=gr;g.fillRect(0,0,64,64);return new THREE.CanvasTexture(c);
 }
-var DN=innerWidth<700?200:360,dpos=new Float32Array(DN*3),dvel=new Float32Array(DN*3);
+var DN=0,dpos=new Float32Array(DN*3),dvel=new Float32Array(DN*3);
 for(var i=0;i<DN;i++){dpos[i*3]=(Math.random()-.5)*34;dpos[i*3+1]=(Math.random()-.5)*20;dpos[i*3+2]=-14+Math.random()*30;dvel[i*3]=(Math.random()-.5)*.12;dvel[i*3+1]=(Math.random()-.5)*.06;dvel[i*3+2]=(Math.random()-.5)*.08}
 var dGeo=new THREE.BufferGeometry();dGeo.setAttribute('position',new THREE.BufferAttribute(dpos,3));
 var dMat=new THREE.PointsMaterial({map:sprite(),size:.11,color:0xff9a4a,transparent:true,opacity:.65,depthWrite:false,blending:THREE.AdditiveBlending});
@@ -754,7 +1157,7 @@ function frame(){
   smooth+=(scrollY-smooth)*(reduce?1:1-Math.exp(-dt*5));
   mx+=(tx-mx)*.05;my+=(ty-my)*.05;
   var S=clamp(smooth/span,0,1),extra=Math.max(0,smooth-span);
-  var split=ss(.13,.46,S),fly=ss(.42,.86,S),land=ss(.72,1,S),sky=ss(.55,.92,S);STATE.land=land;
+  var split=ss(.13,.46,S),fly=ss(.42,.86,S),land=ss(.72,1,S),sky=ss(.55,.92,S);STATE.land=land;document.body.classList.toggle("ctl",land>.92);
   left.position.x=-split*3.6;right.position.x=split*3.6;
   left.rotation.z=split*.16;right.rotation.z=-split*.16;
   left.rotation.y=right.rotation.y=mx*.12;left.rotation.x=right.rotation.x=my*.08;
@@ -787,7 +1190,7 @@ function frame(){
   if(land>.001){
     var sc=lerp(1.45,1.07,land)+clamp(extra*.00012,0,.12);
     g.visibility='visible';g.opacity=land.toFixed(3);g.setProperty('--dim',(land*.2+clamp(extra/(innerHeight*3.5),0,.3)).toFixed(3));
-    g.transform='translate3d('+(-mx*16).toFixed(1)+'px,'+(-my*10).toFixed(1)+'px,0) scale('+sc.toFixed(4)+')';
+    g.transform='translate3d('+(-mx*16+DRG.x).toFixed(1)+'px,'+(-my*10+DRG.y).toFixed(1)+'px,0) scale('+sc.toFixed(4)+')';
   }else if(g.visibility!=='hidden'){g.visibility='hidden';g.opacity='0'}
 
   renderer.render(scene,camera);
