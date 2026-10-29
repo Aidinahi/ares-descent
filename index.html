@@ -1106,6 +1106,7 @@ function initGlobe(){
     host.appendChild(b);
     pins[id]={el:b,v:glbPos(REGS[id].lat,REGS[id].lon)};
   });
+  cam.position.z=3.4;
   GLB={r:r,cam:cam,sc:sc,grp:grp,pins:pins,goal:new THREE.Quaternion(),goalOn:false,zoomT:3.4,run:false,size:0,host:host};
   var drag=null;
   host.addEventListener('pointerdown',function(e){drag={x:e.clientX,y:e.clientY};GLB.goalOn=false;try{host.setPointerCapture(e.pointerId)}catch(_){}});
