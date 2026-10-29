@@ -311,7 +311,7 @@ html:not([lang=fa]) .fa{display:none!important}
 <header class="nav"><div class="wrap">
   <a class="brand" href="#top">ARES DESCENT</a>
   <nav aria-label="Sections" class="mainnav"><a href="#facts" data-i18n="k1">Facts</a><a href="#you" data-i18n="k2">Your age</a><a href="#air" data-i18n="k3">Air</a><a href="#live" data-i18n="k4">Life</a><a href="#maker" data-i18n="k5">Creator</a><a href="#map"><span class="en">Explore</span><span class="fa">کاوش</span></a><a href="#control"><span class="en">Control</span><span class="fa">کنترل</span></a><a href="#ai"><span class="en">AI</span><span class="fa">هوش</span></a></nav>
-  <div class="tools"><button class="snd" id="snd" type="button" aria-pressed="false" aria-label="Turn sound on"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path class="w" d="M16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span id="sndl">Sound off</span></button><button class="lang" id="lang" type="button" aria-label="Switch language">فارسی</button></div>
+  <div class="tools"><button class="lang" id="lang" type="button" aria-label="Switch language">فارسی</button></div>
 </div></header>
 
 <main id="top">
@@ -725,13 +725,11 @@ var rustC=tok('--rust'),iceC=tok('--ice');
 })();
 
 
-/* ---------- ambient sound: synthesized here, starts only after a click ---------- */
+/* ---------- ambient sound: synthesized here, starts on the first scroll gesture ---------- */
 (function(){
-  var btn=$('#snd'),lab=$('#sndl'),AC=window.AudioContext||window.webkitAudioContext;
-  if(!AC){btn.hidden=true;return}
+  var AC=window.AudioContext||window.webkitAudioContext;
+  if(!AC)return;
   var ctx=null,master,wind,pad,on=false,explore=false,timer=0,lastTick=0;
-  function label(){lab.textContent=D(on?'snd1':'snd0');btn.setAttribute('aria-label',D(on?'sndl1':'sndl'));btn.setAttribute('aria-pressed',on?'true':'false');btn.classList.toggle('on',on)}
-  onLang.push(label);
   function brown(){
     var L=ctx.sampleRate*6|0,F=ctx.sampleRate*.5|0,raw=new Float32Array(L+F),last=0,i;
     for(i=0;i<raw.length;i++){last=(last+.02*(Math.random()*2-1))/1.02;raw[i]=last*3.2}
@@ -781,20 +779,20 @@ var rustC=tok('--rust'),iceC=tok('--ice');
     g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v||.05,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+.22);
     o.connect(g);g.connect(master);o.start(t);o.stop(t+.25);
   }
-  btn.addEventListener('click',function(){
-    if(!on){
-      try{if(!ctx)build();if(ctx.resume)ctx.resume()}catch(e){return}
-      on=true;master.gain.setTargetAtTime(.5,ctx.currentTime,.6);levels();clearInterval(timer);timer=setInterval(levels,250);tick(520,.05);
-    }else{
-      on=false;levels();master.gain.setTargetAtTime(0,ctx.currentTime,.25);clearInterval(timer);
-      setTimeout(function(){if(!on&&ctx.suspend)ctx.suspend()},900);
-    }
-    label();
-  });
+  function startOnce(){
+    if(on)return;
+    try{if(!ctx)build();if(ctx.resume)ctx.resume()}catch(e){return}
+    on=true;master.gain.setTargetAtTime(.5,ctx.currentTime,1.4);levels();clearInterval(timer);timer=setInterval(levels,250);tick(520,.05);
+    ['scroll','wheel','touchmove','touchstart','keydown','pointerdown'].forEach(function(ev){window.removeEventListener(ev,startOnce)});
+  }
+  /* 'scroll' itself is not a user-gesture event in every browser's autoplay policy, so it is
+     paired with the real gesture events (wheel/touch/key/pointer) that normally accompany a
+     scroll action, so sound starts the moment the person starts moving through the page. */
+  ['scroll','wheel','touchmove','touchstart','keydown','pointerdown'].forEach(function(ev){window.addEventListener(ev,startOnce,{passive:true,once:false})});
   document.addEventListener('visibilitychange',function(){if(on&&ctx)document.hidden?ctx.suspend():ctx.resume()});
   var ex=$('#explore');
   if(ex&&window.IntersectionObserver)new IntersectionObserver(function(en){explore=en[0].isIntersecting;levels()},{threshold:.3}).observe(ex);
-  document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('button,nav a,.brand');if(b&&b!==btn)tick(660,.04)});
+  document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('button,nav a,.brand');if(b)tick(660,.04)});
   var lastStat=null;
   document.addEventListener('pointerover',function(e){var st=e.target.closest&&e.target.closest('.stat');if(st&&st!==lastStat){lastStat=st;tick(880,.025)}else if(!st)lastStat=null},{passive:true});
 })();
