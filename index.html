@@ -14,10 +14,15 @@
 <meta name="twitter:card" content="summary">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Ares Descent","description":"A scroll-driven 3D journey to Mars.","author":{"@type":"Person","name":"Aidin Hamzeii","url":"https://github.com/Aidinahi"}}</script>
 <title>Ares Descent</title>
+<script>(function(){try{
+  if(!window.matchMedia||!matchMedia('(prefers-reduced-motion: reduce)').matches){
+    document.documentElement.classList.add('hanim');
+  }
+}catch(e){}})();</script>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800&family=Space+Grotesk:wght@500;600&family=Inter:wght@400;500&family=IBM+Plex+Mono:wght@400;500&family=Vazirmatn:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800&family=Space+Grotesk:wght@500;600&family=Inter:wght@400;500&family=IBM+Plex+Mono:wght@400;500&family=Vazirmatn:wght@400;500;600&family=Prata&family=Hanken+Grotesk:wght@400;500;600;700&display=swap">
 <style>
 /* Layout: a fixed WebGL stage (planet splits, camera falls through, lands on terrain) with scroll captions, then dark reading panels floating over the terrain. */
 :root{
@@ -38,9 +43,6 @@
 html{scroll-behavior:smooth}
 body{margin:0;background:var(--bg);color:var(--fg);font:400 var(--fs-body)/1.65 var(--body);overflow-x:clip;-webkit-font-smoothing:antialiased}
 .wrap{max-width:1100px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-#gl{position:fixed;inset:0;width:100%;height:100%;display:block;z-index:0}
-.no-gl body{background:radial-gradient(120% 90% at 50% 20%,#4a1a1c,#04060c 70%)}
-.no-gl #gl{display:none}
 a{color:var(--dust)}
 a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--ice);outline-offset:3px}
 
@@ -54,17 +56,8 @@ a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(-
 @media(max-width:640px){.nav nav a:not(:last-child){display:none}}
 @media(max-width:520px){.nav .mainnav{display:none}}
 
-/* scroll scene */
-.scene{position:relative;z-index:1}
-.cap{height:100vh;display:flex;align-items:flex-end;padding-bottom:13vh}
-.cap .wrap{width:100%}
-.cap p{max-width:34rem;margin:14px 0 0;color:var(--text2);text-shadow:0 1px 14px rgba(0,0,0,.85)}
-.eyebrow{font:400 .74rem/1.4 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--dust)}
-h1{font:700 var(--fs-hero)/1.02 var(--display);letter-spacing:.08em;text-transform:uppercase;margin:14px 0 0;text-shadow:0 2px 30px rgba(0,0,0,.6)}
-h1 span{display:block;color:var(--rust);font-weight:800;text-shadow:0 0 42px rgba(229,67,43,.5),0 2px 30px rgba(0,0,0,.6)}
+/* headings used across content sections */
 h2{font:600 var(--fs-h2)/1.12 var(--head);letter-spacing:-.012em;margin:0;text-wrap:balance;text-shadow:0 2px 24px rgba(0,0,0,.6)}
-.cue{margin-top:30px;font:400 .72rem/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:12px}
-.cue i{display:block;width:1px;height:34px;background:linear-gradient(var(--dust),transparent)}
 
 /* content */
 .content{position:relative;z-index:2;padding-bottom:max(40px,env(safe-area-inset-bottom,0px))}
@@ -157,10 +150,6 @@ footer ul{margin:8px 0 0;padding-inline-start:18px}
 footer li{margin:4px 0}
 
 
-/* surface photo layer: fades in when the camera lands */
-#ground{position:fixed;inset:0;z-index:0;opacity:0;visibility:hidden;background:#2a1418 url(img/surface.jpg) center 62%/cover no-repeat;transform-origin:50% 70%;will-change:opacity,transform;pointer-events:none}
-#ground::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(4,6,12,.82),rgba(4,6,12,.2) 55%,rgba(4,6,12,.04))}
-.no-gl #ground{opacity:1!important;visibility:visible!important;transform:none!important}
 .fig{margin:30px 0 0}
 .fig img{display:block;width:100%;height:auto;max-height:520px;object-fit:cover;border-radius:4px}
 .fig figcaption{margin-top:10px;font:400 .74rem/1.5 var(--mono);color:var(--muted)}
@@ -209,10 +198,6 @@ html[dir=rtl] .rv .bar i{transform-origin:right center}
 .rv .tl li{opacity:0;transition:opacity .6s ease}
 .rv.rv-in .tl li{opacity:1}
 .rv.rv-in .tl li:nth-child(2){transition-delay:.1s}.rv.rv-in .tl li:nth-child(3){transition-delay:.2s}.rv.rv-in .tl li:nth-child(4){transition-delay:.3s}.rv.rv-in .tl li:nth-child(5){transition-delay:.4s}.rv.rv-in .tl li:nth-child(6){transition-delay:.5s}
-
-/* the surface photo darkens a little as the panels take over */
-#ground::before{content:"";position:absolute;inset:0;z-index:1;background:rgba(5,8,16,var(--dim,0))}
-#ground::after{z-index:2}
 
 /* soft ring that follows the pointer inside interactive sections (the normal cursor stays) */
 #cur{position:fixed;left:0;top:0;width:32px;height:32px;margin:-16px 0 0 -16px;border:1px solid rgba(255,154,74,.85);border-radius:50%;pointer-events:none;z-index:50;opacity:0;transition:opacity .25s,width .2s,height .2s,margin .2s,background .2s}
@@ -292,20 +277,135 @@ svg.ch .tl{fill:none;stroke:var(--rust);stroke-width:2.2;stroke-linejoin:round}
 .aiout .src{font:400 .78rem/1.6 var(--mono);color:var(--muted);margin-top:16px}
 .aiout .unc{border-inline-start:2px solid var(--rust);padding-inline-start:12px;margin-top:14px;color:var(--text2)}
 
-/* take-control hint */
-.ctlh{position:fixed;left:50%;bottom:22px;transform:translate(-50%,8px);opacity:0;transition:opacity .5s,transform .5s;font:500 .78rem/1 var(--mono);letter-spacing:.08em;background:rgba(5,8,16,.85);border:1px solid var(--line);color:var(--fg);padding:11px 16px;border-radius:30px;pointer-events:none;z-index:25;white-space:nowrap}
-body.ctl .ctlh{opacity:1;transform:translate(-50%,0)}
-
 /* language-specific text */
 html[lang=fa] .en{display:none!important}
 html:not([lang=fa]) .fa{display:none!important}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.rv,.rv .stat,.rv .tl li{transition:none}}
+
+/* ---------- static Mars hero: a fixed 1353x1163 composition scaled by one unit --u ---------- */
+.stage{position:relative;height:100vh;overflow:hidden;isolation:isolate;
+  color:var(--ink);font-family:var(--font-body);-webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale}
+@supports (height:100dvh){.stage{height:100dvh}}
+:root{
+  --gutter:25; --u:max(min(.72px, calc(100vh / 700)), min(calc(100vw / 1353), calc(100vh / 1163)));
+  --dh-px:calc(1163 * var(--u)); --vshift:calc(max(0px, (100vh - var(--dh-px))) * .42);
+  --ink:#ffffff; --cyan:#79dce8; --rule:rgba(255,255,255,.23); --btn-ink:#071227;
+  --font-serif:'Prata', Georgia, serif;
+  --font-body:'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+@supports (height:100dvh){
+  :root{
+    --u:max(min(.72px, calc(100dvh / 700)), min(calc(100vw / 1353), calc(100dvh / 1163)));
+    --vshift:calc(max(0px, (100dvh - var(--dh-px))) * .42);
+  }
+}
+.sky{position:absolute;inset:0;z-index:0;overflow:hidden;
+  background:radial-gradient(120% 90% at 50% 18%,#132038 0%,#071022 46%,#030810 100%)}
+.sky .planet{position:absolute;left:50%;bottom:calc(-210 * var(--u));width:calc(900 * var(--u));
+  max-width:none;transform:translateX(-50%);
+  filter:drop-shadow(0 calc(40 * var(--u)) calc(90 * var(--u)) rgba(0,0,0,.55));
+  pointer-events:none;user-select:none}
+@media (max-width:579px),(max-height:620px){.sky .planet{width:calc(620 * var(--u));bottom:calc(-150 * var(--u))}}
+.hui{position:absolute;inset:0;z-index:3}
+.hcopy{position:absolute;inset:0;transform:translateY(var(--vshift));pointer-events:none}
+.hcopy a{pointer-events:auto}
+.hcol{position:absolute;left:0;right:calc(var(--gutter) * var(--u));text-align:center}
+.h-eyebrow{top:calc(188.8 * var(--u));font-size:calc(22 * var(--u));font-weight:500;
+  line-height:1.4;letter-spacing:calc(3 * var(--u));text-indent:calc(3 * var(--u));color:#fff}
+.h-title{top:calc(248 * var(--u));font-family:var(--font-serif);font-weight:400;
+  font-size:calc(112.4 * var(--u));line-height:1;letter-spacing:calc(2 * var(--u));
+  text-indent:calc(2 * var(--u));color:#fff}
+.h-rule{top:calc(385.5 * var(--u));height:calc(5 * var(--u));font-size:0;line-height:0;padding-right:calc(2 * var(--u))}
+.h-rule span{display:inline-block;vertical-align:top;width:calc(100 * var(--u));height:100%;
+  border-radius:calc(2.5 * var(--u));background:var(--cyan)}
+.h-lede{top:calc(413.2 * var(--u));font-size:calc(17 * var(--u));font-weight:400;
+  line-height:calc(28 * var(--u));color:rgba(255,255,255,.92);max-width:calc(620 * var(--u));
+  margin:0 auto}
+.h-cta{top:calc(577 * var(--u));height:calc(66 * var(--u));isolation:isolate}
+.h-cta a{display:inline-flex;align-items:center;justify-content:center;width:calc(216 * var(--u));
+  height:calc(66 * var(--u));border-radius:calc(33 * var(--u));font-size:calc(17 * var(--u));
+  font-weight:700;letter-spacing:.02em;line-height:1;color:var(--btn-ink);text-decoration:none;
+  padding-top:calc(2 * var(--u));
+  background:linear-gradient(180deg,#ffffff 0%,#d6e8f8 4%,#d9ecfe 72%,#ffffff 100%);
+  box-shadow:0 calc(10 * var(--u)) calc(18 * var(--u)) calc(-8 * var(--u)) rgba(255,255,255,.50),
+             0 0 calc(26 * var(--u)) rgba(255,255,255,.18),
+             inset 0 0 0 calc(2 * var(--u)) rgba(255,255,255,.9)}
+.hscroll{position:absolute;z-index:4;left:50%;margin-left:calc((-48 - (var(--gutter) / 2)) * var(--u));
+  bottom:calc(68 * var(--u));width:calc(96 * var(--u));height:calc(96 * var(--u));border-radius:50%;
+  background:rgba(24,30,42,.70);-webkit-backdrop-filter:blur(calc(6 * var(--u)));
+  backdrop-filter:blur(calc(6 * var(--u)));border:0;display:flex;align-items:center;
+  justify-content:center;cursor:pointer}
+.hscroll svg{width:calc(20 * var(--u));height:calc(25 * var(--u));display:block}
+.hscroll:focus-visible,.h-cta a:focus-visible{outline:calc(2 * var(--u)) solid var(--cyan);outline-offset:calc(3 * var(--u))}
+@media (min-width:580px) and (max-width:1030px) and (min-height:621px){
+  :root{--gutter:0;
+    --u:min(max(min(.85px, calc(100vh / 780)), min(calc(100vw / 900), calc(100vh / 1163))), 1.15px);
+    --dh-px:calc(1120 * var(--u)); --vshift:calc(max(0px, (100vh - var(--dh-px))) * .38)}
+  @supports (height:100dvh){
+    :root{--u:min(max(min(.85px, calc(100dvh / 780)), min(calc(100vw / 900), calc(100dvh / 1163))), 1.15px);
+      --vshift:calc(max(0px, (100dvh - var(--dh-px))) * .38)}
+  }
+  .h-lede{max-width:calc(560 * var(--u))}
+}
+@media (max-width:579px),(max-height:620px){
+  :root{--gutter:0;
+    --u:max(min(.92px, calc(100vh / 620)), min(calc(100vw / 430), calc(100vh / 880)));
+    --dh-px:calc(880 * var(--u)); --vshift:calc(max(0px, (100vh - var(--dh-px))) * .34)}
+  @supports (height:100dvh){
+    :root{--u:max(min(.92px, calc(100dvh / 620)), min(calc(100vw / 430), calc(100dvh / 880)));
+      --vshift:calc(max(0px, (100dvh - var(--dh-px))) * .34)}
+  }
+  .hcopy{top:calc(76 * var(--u));display:flex;flex-direction:column;align-items:center;
+    padding:calc(56 * var(--u)) calc(26 * var(--u)) 0}
+  .hcol{position:static;width:100%;right:auto}
+  .h-eyebrow{font-size:calc(16 * var(--u));letter-spacing:calc(3 * var(--u));text-indent:calc(3 * var(--u))}
+  .h-title{font-size:calc(86 * var(--u));margin-top:calc(15 * var(--u))}
+  .h-rule{margin-top:calc(20 * var(--u));height:calc(5 * var(--u));padding-right:0}
+  .h-rule span{width:calc(84 * var(--u))}
+  .h-lede{margin-top:calc(19 * var(--u));font-size:calc(14.5 * var(--u));
+    line-height:calc(24 * var(--u));max-width:calc(400 * var(--u))}
+  .h-cta{top:auto;margin-top:calc(32 * var(--u));height:calc(60 * var(--u));position:relative}
+  .h-cta a{width:calc(190 * var(--u));height:calc(60 * var(--u));border-radius:calc(30 * var(--u))}
+  .hscroll{width:calc(74 * var(--u));height:calc(74 * var(--u));margin-left:calc(-37 * var(--u));bottom:calc(49 * var(--u))}
+  .hscroll svg{width:calc(15.5 * var(--u));height:calc(19.5 * var(--u))}
+}
+@media (max-height:660px){.hscroll{display:none}}
+@media (max-height:620px){
+  :root{--u:max(min(.85px, calc(100vh / 470)), min(calc(100vw / 640), calc(100vh / 560)));--dh-px:calc(560 * var(--u));--vshift:0px}
+  .hcopy{padding-top:calc(26 * var(--u))}
+  .h-title{font-size:calc(64 * var(--u));margin-top:calc(8 * var(--u))}
+  .h-rule{margin-top:calc(12 * var(--u))}
+  .h-lede{margin-top:calc(12 * var(--u))}
+  .h-cta{margin-top:calc(20 * var(--u))}
+}
+@media (min-width:821px) and (max-height:660px){.hcopy{transform:none}}
+
+/* hero entrance (runs once, deletes its own classes after) */
+@keyframes ent-reveal{from{transform:translateY(115%)}to{transform:translateY(0)}}
+@keyframes ent-rise{from{opacity:0;transform:translateY(var(--rise,10px))}to{opacity:1;transform:none}}
+@keyframes ent-settle{from{opacity:0;transform:translateY(var(--rise,8px)) scale(.965)}to{opacity:1;transform:none}}
+@keyframes ent-draw{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes ent-fade{from{opacity:0}to{opacity:1}}
+.hanim{--e-expo:cubic-bezier(.16,1,.3,1);--e-quint:cubic-bezier(.22,1,.36,1);--e-slow:cubic-bezier(.4,0,.2,1)}
+.ent-mask,.ent-line{display:block}
+.hanim .ent-mask{overflow:hidden;padding-top:.18em;margin-top:-.18em}
+.hanim .ent-line{transform:translateY(115%);will-change:transform}
+.hanim .h-rule span{transform:scaleX(0)}
+.hanim .h-lede,.hanim .h-cta a,.hanim .hscroll,.hanim .sky{opacity:0}
+.hanim .sky{will-change:opacity}
+.hanim.hplay .sky{animation:ent-fade 1.6s var(--e-slow) .2s both}
+.hanim.hplay .h-eyebrow .ent-line{animation:ent-reveal .75s var(--e-expo) .25s both}
+.hanim.hplay .h-title .ent-line{animation:ent-reveal .95s var(--e-expo) .38s both}
+.hanim.hplay .h-rule span{animation:ent-draw .65s var(--e-expo) .72s both}
+.hanim.hplay .h-lede{--rise:12px;animation:ent-rise .7s var(--e-quint) .8s both}
+.hanim.hplay .h-cta a{--rise:8px;animation:ent-settle .7s var(--e-quint) 1.05s both}
+.hanim.hplay .hscroll{animation:ent-settle .6s var(--e-quint) 1.3s both}
+@media (prefers-reduced-motion:reduce){.hanim .ent-line{transform:none}}
 </style>
 </head>
 <body>
 
-<canvas id="gl" aria-hidden="true"></canvas>
-<div id="ground" aria-hidden="true"></div>
 <div id="cur" aria-hidden="true"></div>
 
 <header class="nav"><div class="wrap">
@@ -315,28 +415,22 @@ html:not([lang=fa]) .fa{display:none!important}
 </div></header>
 
 <main id="top">
-<div class="scene" id="scene">
-  <section class="cap"><div class="wrap">
-    <div class="eyebrow" data-i18n="k6">A scroll-through guide to the Red Planet</div>
-    <h1>ARES<span>DESCENT</span></h1>
-    <p data-i18n="k7">Scroll to split Mars in half, fall through the gap and land on its surface.</p>
-    <div class="cue" data-i18n="k8"><i></i>Scroll</div>
-  </div></section>
-  <section class="cap"><div class="wrap">
-    <div class="eyebrow" data-i18n="k9">Step 1 · Interior</div>
-    <h2 data-i18n="k10">Cut it open.</h2>
-    <p data-i18n="k11">Under a thin rocky crust sits a mantle and an iron-rich core about 1,800 km in radius. NASA's InSight lander listened to marsquakes and found that this core is liquid.</p>
-  </div></section>
-  <section class="cap"><div class="wrap">
-    <div class="eyebrow" data-i18n="k12">Step 2 · Descent</div>
-    <h2 data-i18n="k13">Fall through the gap.</h2>
-    <p data-i18n="k14">Mars is just over half as wide as Earth, 6,792 km across at the equator. Everything here is smaller, colder and quieter than home.</p>
-  </div></section>
-  <section class="cap"><div class="wrap">
-    <div class="eyebrow" data-i18n="k15">Step 3 · Surface</div>
-    <h2 data-i18n="k16">Touch down.</h2>
-    <p data-i18n="k17">Iron oxide dust paints the ground rust red. The air is 95% carbon dioxide and less than 1% as dense as ours. Keep scrolling.</p>
-  </div></section>
+<div class="stage">
+  <div class="sky"><img class="planet" src="img/tex/mars-sphere.png" alt="" aria-hidden="true"></div>
+  <div class="hui">
+    <div class="hcopy">
+      <div class="hcol h-eyebrow"><span class="ent-mask"><span class="ent-line"><span class="en">A guide to the Red Planet</span><span class="fa">راهنمای سیاره‌ی سرخ</span></span></span></div>
+      <div class="hcol h-title"><span class="ent-mask"><span class="ent-line">MARS</span></span></div>
+      <div class="hcol h-rule"><span></span></div>
+      <p class="hcol h-lede"><span class="en">Scroll down to explore its size, air, surface, moons and six decades of missions &mdash; in English or Persian.</span><span class="fa">برای کاوش اندازه، هوا، سطح، قمرها و شش دهه ماموریت این سیاره اسکرول کن؛ به فارسی یا انگلیسی.</span></p>
+      <div class="hcol h-cta"><a href="#facts"><span class="en">EXPLORE</span><span class="fa">کاوش کن</span></a></div>
+    </div>
+  </div>
+  <button class="hscroll" type="button" id="heroscroll" aria-label="Scroll to the facts section">
+    <svg viewBox="0 0 26 33" fill="none" aria-hidden="true">
+      <path d="M13 1.5 V31.5 M1.9 20.4 L13 31.5 L24.1 20.4" stroke="#ffffff" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter"/>
+    </svg>
+  </button>
 </div>
 
 <div class="content"><div class="wrap stack">
@@ -549,8 +643,6 @@ html:not([lang=fa]) .fa{display:none!important}
     <div class="aiout" id="aiout" aria-live="polite"></div>
   </div>
 </section>
-
-<div class="ctlh" id="ctlh"><span class="en">Take control: drag to look around the surface</span><span class="fa">کنترل با توست: بکش و سطح را بگرد</span></div>
 
 <section class="sheet" id="maker">
     <h3 data-i18n="k5">Creator</h3>
@@ -768,9 +860,9 @@ var rustC=tok('--rust'),iceC=tok('--ice');
     pad.connect(dl);dl.connect(dlp);dlp.connect(fb);fb.connect(dl);dlp.connect(master);
   }
   function levels(){
-    if(!ctx)return;var t=ctx.currentTime,land=STATE.land;
-    wind.gain.setTargetAtTime(on?.55*land:0,t,1.2);
-    pad.gain.setTargetAtTime(on?(explore?.2:.1)*(1-.4*land):0,t,1.5);
+    if(!ctx)return;var t=ctx.currentTime;
+    wind.gain.setTargetAtTime(on?.45:0,t,1.2);
+    pad.gain.setTargetAtTime(on?(explore?.2:.12):0,t,1.5);
   }
   function tick(f,v){
     if(!on||!ctx)return;var n=performance.now();if(n-lastTick<90)return;lastTick=n;
@@ -821,17 +913,6 @@ var rustC=tok('--rust'),iceC=tok('--ice');
 })();
 
 /* ---------- explorer, simulator, mission control, Mars AI (local data, no network) ---------- */
-var DRG={x:0,y:0},dragPt=null;
-document.addEventListener('pointerdown',function(e){
-  var t=e.target;
-  if(STATE.land>.92&&!(t.closest&&t.closest('button,input,select,a,label,.sheet,.ctlh')))dragPt={x:e.clientX,y:e.clientY};
-},{passive:true});
-document.addEventListener('pointermove',function(e){
-  if(!dragPt)return;
-  DRG.x=clamp(DRG.x+(e.clientX-dragPt.x),-160,160);DRG.y=clamp(DRG.y+(e.clientY-dragPt.y),-120,120);
-  dragPt={x:e.clientX,y:e.clientY};
-},{passive:true});
-document.addEventListener('pointerup',function(){dragPt=null});
 
 function T(v){return v?(LANG==='fa'?v[1]:v[0]):''}
 function N(s){return LANG==='fa'?faDigits(String(s)):String(s)}
@@ -1071,7 +1152,6 @@ function renderAI(){
 
 function renderAll(){
   refreshPins();renderPanel();renderSim();renderMissions();renderYears();renderTele();renderGallery();renderAI();
-  $('#ctlh').setAttribute('aria-hidden','false');
 }
 
 /* 3D globe: same equirectangular texture wrapped on a sphere. Needs THREE; flat map is the fallback. */
@@ -1167,130 +1247,29 @@ renderAll();
 $('#lang').addEventListener('click',function(){setLang(LANG==='fa'?'en':'fa')});
 applyLang();
 
-/* ---------- 3D stage ---------- */
-var THREE=window.THREE;
-var canvas=$('#gl'),ground=$('#ground'),renderer;
-if(!THREE){document.documentElement.classList.add('no-gl');STATE.land=1;return}
-try{renderer=new THREE.WebGLRenderer({canvas:canvas,antialias:true})}catch(e){document.documentElement.classList.add('no-gl');STATE.land=1;return}
-renderer.outputEncoding=THREE.sRGBEncoding;
-renderer.setPixelRatio(Math.min(devicePixelRatio||1,innerWidth<700?1.5:2));
-
-var scene=new THREE.Scene();
-var SPACE=new THREE.Color(0x03050b),SKY=new THREE.Color(0x9a3524);
-scene.background=SPACE.clone();
-var camera=new THREE.PerspectiveCamera(50,1,.1,1200);
-
-// stars
-var starGeo=new THREE.BufferGeometry(),sp=new Float32Array(2600*3);
-for(var i=0;i<2600;i++){var u=Math.random()*2-1,a=Math.random()*6.2832,r=Math.sqrt(1-u*u),d=300+Math.random()*300;sp[i*3]=r*Math.cos(a)*d;sp[i*3+1]=u*d;sp[i*3+2]=r*Math.sin(a)*d}
-starGeo.setAttribute('position',new THREE.BufferAttribute(sp,3));
-var starMat=new THREE.PointsMaterial({color:0xe8f0ff,size:1.5,sizeAttenuation:false,transparent:true,fog:false});
-scene.add(new THREE.Points(starGeo,starMat));
-
-// drifting dust that reacts to the pointer
-function sprite(){
-  var c=document.createElement('canvas');c.width=c.height=64;var g=c.getContext('2d');
-  var gr=g.createRadialGradient(32,32,0,32,32,32);gr.addColorStop(0,'rgba(255,255,255,1)');gr.addColorStop(.35,'rgba(255,255,255,.45)');gr.addColorStop(1,'rgba(255,255,255,0)');
-  g.fillStyle=gr;g.fillRect(0,0,64,64);return new THREE.CanvasTexture(c);
-}
-var DN=0,dpos=new Float32Array(DN*3),dvel=new Float32Array(DN*3);
-for(var i=0;i<DN;i++){dpos[i*3]=(Math.random()-.5)*34;dpos[i*3+1]=(Math.random()-.5)*20;dpos[i*3+2]=-14+Math.random()*30;dvel[i*3]=(Math.random()-.5)*.12;dvel[i*3+1]=(Math.random()-.5)*.06;dvel[i*3+2]=(Math.random()-.5)*.08}
-var dGeo=new THREE.BufferGeometry();dGeo.setAttribute('position',new THREE.BufferAttribute(dpos,3));
-var dMat=new THREE.PointsMaterial({map:sprite(),size:.11,color:0xff9a4a,transparent:true,opacity:.65,depthWrite:false,blending:THREE.AdditiveBlending});
-var dust=new THREE.Points(dGeo,dMat);dust.frustumCulled=false;scene.add(dust);
-
-// planet: a real photograph projected onto both halves of the sphere
-var R=2,FIT=.9557;
-var planetMat=new THREE.MeshBasicMaterial({color:0xb4623a});
-new THREE.TextureLoader().load('img/planet.jpg',function(t){
-  t.encoding=THREE.sRGBEncoding;t.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());
-  planetMat.map=t;planetMat.color.set(0xffffff);planetMat.needsUpdate=true;
-});
-function coreTexture(){
-  var c=document.createElement('canvas');c.width=c.height=512;var g=c.getContext('2d');
-  function disc(r,fill){g.beginPath();g.arc(256,256,r,0,6.2832);g.fillStyle=fill;g.fill()}
-  disc(256,'#5a2a1a');
-  var m=g.createRadialGradient(256,256,100,256,256,242);m.addColorStop(0,'#c4622e');m.addColorStop(1,'#7e3a20');
-  disc(242,m);
-  var k=g.createRadialGradient(256,256,0,256,256,140);k.addColorStop(0,'#ffe3b0');k.addColorStop(.6,'#f2a24a');k.addColorStop(1,'#d9692b');
-  disc(140,k);
-  g.strokeStyle='rgba(20,8,4,.35)';g.lineWidth=2;[140,242].forEach(function(r){g.beginPath();g.arc(256,256,r,0,6.2832);g.stroke()});
-  var t=new THREE.CanvasTexture(c);t.encoding=THREE.sRGBEncoding;return t;
-}
-var coreTex=coreTexture();
-function half(sign){
-  var geo=new THREE.SphereGeometry(R,96,64,sign<0?-Math.PI/2:Math.PI/2,Math.PI);
-  var p=geo.attributes.position,uv=geo.attributes.uv;
-  for(var i=0;i<p.count;i++)uv.setXY(i,.5+p.getX(i)/R*FIT*.5,.5+p.getY(i)/R*FIT*.5);
-  var shell=new THREE.Mesh(geo,planetMat);
-  var cut=new THREE.Mesh(new THREE.CircleGeometry(R,96),new THREE.MeshBasicMaterial({map:coreTex,side:THREE.DoubleSide}));
-  cut.rotation.y=sign<0?Math.PI/2:-Math.PI/2;
-  var grp=new THREE.Group();grp.add(shell,cut);scene.add(grp);return grp;
-}
-var left=half(-1),right=half(1);
-
-// thin atmosphere glow around the planet
-var atmMat=new THREE.ShaderMaterial({transparent:true,side:THREE.BackSide,blending:THREE.AdditiveBlending,depthWrite:false,uniforms:{k:{value:1}},
-  vertexShader:'varying vec3 vN;void main(){vN=normalize(normalMatrix*normal);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}',
-  fragmentShader:'varying vec3 vN;uniform float k;void main(){float f=pow(clamp(0.66-dot(vN,vec3(0.0,0.0,1.0)),0.0,1.0),3.0);gl_FragColor=vec4(vec3(0.95,0.55,0.34)*f*1.3*k,f*k);}'});
-var atm=new THREE.Mesh(new THREE.SphereGeometry(R*1.06,64,48),atmMat);scene.add(atm);
-
-/* ---------- loop ---------- */
-var sceneEl=$('#scene'),span=1,mx=0,my=0,tx=0,ty=0,smooth=0,clock=new THREE.Clock(),vis=true,tanF=Math.tan(25*Math.PI/180);
-function resize(){
-  var w=innerWidth,h=innerHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.fov=w/h<1?66:50;camera.updateProjectionMatrix();
-  tanF=Math.tan(camera.fov*Math.PI/360);span=Math.max(1,sceneEl.offsetHeight-h*.35);
-}
-addEventListener('resize',resize);resize();
-addEventListener('pointermove',function(e){tx=e.clientX/innerWidth-.5;ty=e.clientY/innerHeight-.5},{passive:true});
-document.addEventListener('visibilitychange',function(){vis=!document.hidden;if(vis){clock.getDelta();requestAnimationFrame(frame)}});
-var look=new THREE.Vector3();
-function frame(){
-  if(!vis)return;
-  var dt=Math.min(.05,clock.getDelta());
-  smooth+=(scrollY-smooth)*(reduce?1:1-Math.exp(-dt*5));
-  mx+=(tx-mx)*.05;my+=(ty-my)*.05;
-  var S=clamp(smooth/span,0,1),extra=Math.max(0,smooth-span);
-  var split=ss(.13,.46,S),fly=ss(.42,.86,S),land=ss(.72,1,S),sky=ss(.55,.92,S);STATE.land=land;document.body.classList.toggle("ctl",land>.92);
-  left.position.x=-split*3.6;right.position.x=split*3.6;
-  left.rotation.z=split*.16;right.rotation.z=-split*.16;
-  left.rotation.y=right.rotation.y=mx*.12;left.rotation.x=right.rotation.x=my*.08;
-  atmMat.uniforms.k.value=1-ss(.1,.3,S);atm.visible=atmMat.uniforms.k.value>.01;
-  camera.position.set(mx*.5,-my*.2,lerp(9.5,-3,fly));
-  look.set(mx*.8,-my*.4,camera.position.z-10);camera.lookAt(look);
-  scene.background.copy(SPACE).lerp(SKY,sky);
-  starMat.opacity=1-sky;
-
-  // dust: slow drift, pushed away from the pointer
-  if(!reduce){
-    var cz=camera.position.z,cx=camera.position.x,pr=1.7;
-    for(var i=0;i<DN;i++){
-      var j=i*3,x=dpos[j],y=dpos[j+1],z=dpos[j+2],d=cz-z;
-      if(d>1){
-        var px=cx+tx*2*d*tanF*camera.aspect,py=-ty*2*d*tanF,dx=x-px,dy=y-py,q=Math.sqrt(dx*dx+dy*dy);
-        if(q<pr){var f=(1-q/pr);f*=f*dt*14/(q+.2);dvel[j]+=dx*f;dvel[j+1]+=dy*f}
-      }
-      dvel[j]*=.985;dvel[j+1]*=.985;
-      x+=dvel[j]*dt+.05*dt;y+=dvel[j+1]*dt;z+=dvel[j+2]*dt;
-      if(x>17)x=-17;else if(x<-17)x=17;if(y>10)y=-10;else if(y<-10)y=10;if(z>16)z=-14;else if(z<-14)z=16;
-      dpos[j]=x;dpos[j+1]=y;dpos[j+2]=z;
-    }
-    dGeo.attributes.position.needsUpdate=true;
+})();
+</script>
+<script>
+(function(){
+  var s=document.getElementById('heroscroll');
+  if(s)s.addEventListener('click',function(){
+    var t=document.getElementById('facts');
+    if(t)t.scrollIntoView({behavior:'smooth',block:'start'});
+  });
+  if(!document.documentElement.classList.contains('hanim'))return;
+  function play(){
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){
+        document.documentElement.classList.add('hplay');
+        setTimeout(function(){document.documentElement.classList.remove('hanim','hplay')},2150);
+      });
+    });
   }
-  dMat.opacity=.65*(1-ss(.72,.95,S));dust.visible=dMat.opacity>.01;
-
-  // real surface photo fades in and settles as the camera lands
-  var g=ground.style;
-  if(land>.001){
-    var sc=lerp(1.45,1.07,land)+clamp(extra*.00012,0,.12);
-    g.visibility='visible';g.opacity=land.toFixed(3);g.setProperty('--dim',(land*.2+clamp(extra/(innerHeight*3.5),0,.3)).toFixed(3));
-    g.transform='translate3d('+(-mx*16+DRG.x).toFixed(1)+'px,'+(-my*10+DRG.y).toFixed(1)+'px,0) scale('+sc.toFixed(4)+')';
-  }else if(g.visibility!=='hidden'){g.visibility='hidden';g.opacity='0'}
-
-  renderer.render(scene,camera);
-  requestAnimationFrame(frame);
-}
-requestAnimationFrame(frame);
+  if(document.fonts && document.fonts.ready){
+    var done=false,finish=function(){if(done)return;done=true;play()};
+    document.fonts.ready.then(finish).catch(finish);
+    setTimeout(finish,500);
+  }else{play()}
 })();
 </script>
 </body>
