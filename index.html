@@ -301,7 +301,10 @@ html:not([lang=fa]) .fa{display:none!important}
   }
 }
 .sky{position:absolute;inset:0;z-index:0;overflow:hidden;
-  background:radial-gradient(120% 90% at 50% 18%,#132038 0%,#071022 46%,#030810 100%)}
+  background:
+    radial-gradient(120% 90% at 50% 18%,rgba(22,9,4,0) 0%,rgba(10,4,2,.55) 55%,rgba(5,2,1,.88) 100%),
+    url('img/haze.jpg') center 32%/cover no-repeat,
+    linear-gradient(180deg,#120603 0%,#2a0f05 55%,#120603 100%)}
 .sky .planet{position:absolute;left:50%;bottom:calc(-210 * var(--u));width:calc(900 * var(--u));
   max-width:none;transform:translateX(-50%);
   filter:drop-shadow(0 calc(40 * var(--u)) calc(90 * var(--u)) rgba(0,0,0,.55));
